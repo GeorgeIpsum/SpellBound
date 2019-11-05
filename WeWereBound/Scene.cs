@@ -115,6 +115,35 @@ namespace WeWereBound
             return Calc.BetweenInterval(TimeActive, interval);
         }
 
+        public bool OnRawInterval(float interval)
+        {
+            return (int)((RawTimeActive - GameEngine.RawDeltaTime) / interval) < Math.Floor((RawTimeActive) / interval);
+        }
+
+        public bool OnRawInterval(float interval, float offset)
+        {
+            return (RawTimeActive - offset - GameEngine.RawDeltaTime) / interval < Math.Floor((RawTimeActive - offset) / interval);
+        }
+
+        public bool BetweenRawInterval(float interval)
+        {
+            return Calc.BetweenInterval(RawTimeActive, interval);
+        }
+
+        #endregion
+
+        #region Collisions v Tags
+
+        public bool CollideCheck(Vector2 point, int tag)
+        {
+            var list = TagLists[(int)tag];
+
+            for (int i = 0; i < list.Count; i++)
+                if (list[i].Collidable && list[i].CollidePoint(point)) return true;
+
+            return false;
+        }
+
         #endregion
 
     }
