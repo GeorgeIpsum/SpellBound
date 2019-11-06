@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
   <PropertyGroup>
@@ -50,9 +50,16 @@
     <Compile Include="Colliders\Hitbox.cs" />
     <Compile Include="Components\CollidableComponent.cs" />
     <Compile Include="Components\Component.cs" />
+    <Compile Include="Components\Graphics\GraphicsComponent.cs" />
+    <Compile Include="Components\Graphics\Image.cs" />
+    <Compile Include="Components\Graphics\Sprite.cs" />
     <Compile Include="Components\Logic\Coroutine.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="Graphics\Atlas.cs" />
     <Compile Include="Graphics\MTexture.cs" />
+    <Compile Include="Graphics\SpriteBank.cs" />
+    <Compile Include="Graphics\SpriteData.cs" />
+    <Compile Include="Graphics\Tileset.cs" />
     <Compile Include="Input\MInput.cs" />
     <Compile Include="Input\VirtualAxis.cs" />
     <Compile Include="Input\VirtualButton.cs" />
@@ -150,9 +157,7 @@
     <None Include="app.manifest" />
     <None Include="Content\WeWereBoundDefault.spritefont" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\Graphics\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
