@@ -48,7 +48,15 @@ namespace WeWereBound
         //change later to reflect different platforms if needed
         public static string ContentDirectory
         {
+#if PS4
+            get { return Path.Combine("/app0/", Instance.Content.RootDirectory); }
+#elif NSWITCH
+            get { return Path.Combine("rom:/", Instance.Content.RootDirectory); }
+#elif XBOXONE
+            get { return Instance.Content.RootDirectory; }
+#else
             get { return Path.Combine(AssemblyDirectory, Instance.Content.RootDirectory); }
+#endif
         }
 
         public static Color ClearColor;
@@ -76,10 +84,18 @@ namespace WeWereBound
             Graphics.PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8;
             Graphics.ApplyChanges();
 
+#if PS4 || XBOXONE
+            Graphics.PreferredBackBufferWidth = 1920;
+            Graphics.PreferredBackBufferHeight = 1080;
+#elif NSWITCH
+            Graphics.PreferredBackBufferWidth = 1280;
+            Graphics.PreferredBackBufferHeight = 720;
+#else
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += OnClientSizeChanged;
+#endif
 
-            if(fullscreen)
+            if (fullscreen)
             {
                 Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -194,6 +210,8 @@ namespace WeWereBound
             RawDeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             DeltaTime = RawDeltaTime * TimeRate;
 
+            MInput.Update();
+
 #if !CONSOLE
             if(ExitOnEscapeKeypress)
             {
@@ -209,6 +227,27 @@ namespace WeWereBound
                 return;
             }
 
+            if (FreezeTimer > 0) FreezeTimer = Math.Max(FreezeTimer - RawDeltaTime, 0);
+            else if (scene != null)
+            {
+                scene.BeforeUpdate();
+                scene.Update();
+                scene.AfterUpdate();
+            }
+
+            if (Commands.Open) Commands.UpdateOpen();
+            else if (Commands.Enabled) Commands.UpdateClosed();
+
+            if (scene != nextScene)
+            {
+                var lastScene = scene;
+                if (scene != null) scene.End();
+
+                scene = nextScene;
+                OnSceneTransition(lastScene, nextScene);
+                if (scene != null) scene.Begin();
+            }
+
             base.Update(gameTime);
         }
 
@@ -221,6 +260,7 @@ namespace WeWereBound
             RenderCore();
 
             base.Draw(gameTime);
+            if (Commands.Open) Commands.Render();
 
             fpsCounter++;
             counterElapsed += gameTime.ElapsedGameTime;
@@ -237,14 +277,23 @@ namespace WeWereBound
 
         protected virtual void RenderCore()
         {
+            if (scene != null) scene.BeforeRender();
+
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Viewport = Viewport;
             GraphicsDevice.Clear(ClearColor);
+
+            if (scene != null)
+            {
+                scene.Render();
+                scene.AfterRender();
+            }
         }
 
         protected override void OnExiting(object sender, EventArgs args)
         {
             base.OnExiting(sender, args);
+            MInput.Shutdown();
         }
 
         public void RunWithLogging()
