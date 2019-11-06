@@ -85,6 +85,11 @@ namespace WeWereBound
             Components.HandleGraphicsReset();
         }
 
+        public virtual void HandleGraphicsCreate()
+        {
+            Components.HandleGraphicsCreate();
+        }
+
         public void RemoveSelf()
         {
             if (Scene != null) Scene.Entities.Remove(this);

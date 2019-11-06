@@ -17,6 +17,9 @@ namespace WeWereBound
 
         public static GameEngine Instance { get; private set; }
         public static GraphicsDeviceManager Graphics { get; private set; }
+        public static Commands Commands { get; private set; }
+        public static Pooler Pooler { get; private set; }
+        public static Action OverloadGameLoop;
 
         public static int Width { get; private set; }
         public static int Height { get; private set; }
@@ -50,6 +53,9 @@ namespace WeWereBound
 
         public static Color ClearColor;
         public static bool ExitOnEscapeKeypress;
+
+        private Scene scene;
+        private Scene nextScene;
 
         public GameEngine(int width, int height, int windowWidth, int windowHeight, string windowTitle, bool fullscreen)
         {
@@ -113,21 +119,31 @@ namespace WeWereBound
         protected virtual void OnGraphicsReset(object sender, EventArgs e)
         {
             UpdateView();
+
+            if (scene != null) scene.HandleGraphicsReset();
+            if (nextScene != null && nextScene != scene) nextScene.HandleGraphicsReset();
         }
 
         protected virtual void OnGraphicsCreate(object sender, EventArgs args)
         {
             UpdateView();
+
+            if (scene != null) scene.HandleGraphicsCreate();
+            if (nextScene != null && nextScene != scene) nextScene.HandleGraphicsCreate();
         }
 
         protected override void OnActivated(object sender, EventArgs args)
         {
             base.OnActivated(sender, args);
+
+            if (scene != null) scene.GainFocus();
         }
 
         protected override void OnDeactivated(object sender, EventArgs args)
         {
             base.OnDeactivated(sender, args);
+
+            if (scene != null) scene.LoseFocus();
         }
 
         /// <summary>
@@ -139,6 +155,11 @@ namespace WeWereBound
         protected override void Initialize()
         {
             base.Initialize();
+
+            MInput.Initialize();
+            Tracker.Initialize();
+            Pooler = new WeWereBound.Pooler();
+            Commands = new Commands();
         }
 
         /// <summary>
@@ -149,6 +170,8 @@ namespace WeWereBound
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             base.LoadContent();
+
+            WeWereBound.Draw.Initialize(GraphicsDevice);
             // TODO: use this.Content to load your game content here
         }
 
@@ -237,6 +260,30 @@ namespace WeWereBound
             }
         }
 
+        #region Scene
+
+        /// <summary>
+        /// Called after a Scene ends, before the next Scene begins
+        /// </summary>
+        protected virtual void OnSceneTransition(Scene from, Scene to)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            TimeRate = 1f;
+        }
+
+        /// <summary>
+        /// The currently active Scene. Note that if set, the Scene will not actually change until the end of the Update
+        /// </summary>
+        public static Scene Scene
+        {
+            get { return Instance.scene; }
+            set { Instance.nextScene = value; }
+        }
+
+        #endregion
+
         #region Screen
 
         public static Viewport Viewport { get; private set; }
@@ -259,7 +306,7 @@ namespace WeWereBound
 #endif
         }
 
-        public static void SetFullScreen()
+        public static void SetFullscreen()
         {
 #if !CONSOLE
             resizing = true;

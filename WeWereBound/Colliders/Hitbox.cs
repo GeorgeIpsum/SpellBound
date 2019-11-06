@@ -146,7 +146,7 @@ namespace WeWereBound
 
         public override bool Collide(Circle circle)
         {
-            return Monocle.Collide.RectToCircle(AbsoluteLeft, AbsoluteTop, Width, Height, circle.AbsolutePosition, circle.Radius);
+            return WeWereBound.Collide.RectToCircle(AbsoluteLeft, AbsoluteTop, Width, Height, circle.AbsolutePosition, circle.Radius);
         }
 
         public override bool Collide(ColliderList list)

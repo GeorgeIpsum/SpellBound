@@ -238,7 +238,7 @@ namespace WeWereBound
         public void RenderOnlyFullMatch(int matchTags)
         {
             foreach (var e in entities)
-                if (e.Visible && e.TagFullCheck(match)) e.Render();
+                if (e.Visible && e.TagFullCheck(matchTags)) e.Render();
         }
 
         public void RenderExcept(int excludeTags)

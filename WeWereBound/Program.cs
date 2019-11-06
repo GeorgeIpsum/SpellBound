@@ -13,7 +13,7 @@ namespace WeWereBound
         [STAThread]
         static void Main()
         {
-            using (var game = new GameEngine())
+            using (var game = new GameEngine(800, 600, 800, 600, "we were bound", false))
                 game.Run();
         }
     }
