@@ -1,4 +1,5 @@
 ﻿using System;
+using WeWereBound.Bound;
 
 namespace WeWereBound
 {
@@ -13,7 +14,7 @@ namespace WeWereBound
         [STAThread]
         static void Main()
         {
-            using (var game = new GameEngine(800, 600, 800, 600, "we were bound", false))
+            using (var game = new SpellBound())
                 game.Run();
         }
     }
