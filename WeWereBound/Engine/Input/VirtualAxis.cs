@@ -1,151 +1,122 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
-namespace WeWereBound.Engine
-{
+namespace WeWereBound.Engine {
     /// <summary>
     /// A virtual input represented as a float between -1 and 1
     /// </summary>
-    public class VirtualAxis : VirtualInput
-    {
+    public class VirtualAxis : VirtualInput {
         public List<Node> Nodes;
 
         public float Value { get; private set; }
         public float PreviousValue { get; private set; }
 
         public VirtualAxis()
-            : base()
-        {
+            : base() {
             Nodes = new List<Node>();
         }
 
         public VirtualAxis(params Node[] nodes)
-            : base()
-        {
+            : base() {
             Nodes = new List<Node>(nodes);
         }
 
-        public override void Update()
-        {
+        public override void Update() {
             foreach (var node in Nodes)
                 node.Update();
 
             PreviousValue = Value;
             Value = 0;
-            foreach (var node in Nodes)
-            {
+            foreach (var node in Nodes) {
                 float value = node.Value;
-                if (value != 0)
-                {
+                if (value != 0) {
                     Value = value;
                     break;
                 }
             }
         }
 
-        public static implicit operator float(VirtualAxis axis)
-        {
+        public static implicit operator float(VirtualAxis axis) {
             return axis.Value;
         }
 
-        public abstract class Node : VirtualInputNode
-        {
+        public abstract class Node : VirtualInputNode {
             public abstract float Value { get; }
         }
 
-        public class PadLeftStickX : Node
-        {
+        public class PadLeftStickX : Node {
             public int GamepadIndex;
             public float Deadzone;
 
-            public PadLeftStickX(int gamepadIndex, float deadzone)
-            {
+            public PadLeftStickX(int gamepadIndex, float deadzone) {
                 GamepadIndex = gamepadIndex;
                 Deadzone = deadzone;
             }
 
-            public override float Value
-            {
-                get
-                {
+            public override float Value {
+                get {
                     return Calc.SignThreshold(MInput.GamePads[GamepadIndex].GetLeftStick().X, Deadzone);
                 }
             }
         }
 
-        public class PadLeftStickY : Node
-        {
+        public class PadLeftStickY : Node {
             public int GamepadIndex;
             public float Deadzone;
 
-            public PadLeftStickY(int gamepadIndex, float deadzone)
-            {
+            public PadLeftStickY(int gamepadIndex, float deadzone) {
                 GamepadIndex = gamepadIndex;
                 Deadzone = deadzone;
             }
 
-            public override float Value
-            {
-                get
-                {
+            public override float Value {
+                get {
                     return Calc.SignThreshold(MInput.GamePads[GamepadIndex].GetLeftStick().Y, Deadzone);
                 }
             }
         }
 
-        public class PadRightStickX : Node
-        {
+        public class PadRightStickX : Node {
             public int GamepadIndex;
             public float Deadzone;
 
-            public PadRightStickX(int gamepadIndex, float deadzone)
-            {
+            public PadRightStickX(int gamepadIndex, float deadzone) {
                 GamepadIndex = gamepadIndex;
                 Deadzone = deadzone;
             }
 
-            public override float Value
-            {
-                get
-                {
+            public override float Value {
+                get {
                     return Calc.SignThreshold(MInput.GamePads[GamepadIndex].GetRightStick().X, Deadzone);
                 }
             }
         }
 
-        public class PadRightStickY : Node
-        {
+        public class PadRightStickY : Node {
             public int GamepadIndex;
             public float Deadzone;
 
-            public PadRightStickY(int gamepadIndex, float deadzone)
-            {
+            public PadRightStickY(int gamepadIndex, float deadzone) {
                 GamepadIndex = gamepadIndex;
                 Deadzone = deadzone;
             }
 
-            public override float Value
-            {
-                get
-                {
+            public override float Value {
+                get {
                     return Calc.SignThreshold(MInput.GamePads[GamepadIndex].GetRightStick().Y, Deadzone);
                 }
             }
         }
 
-        public class PadDpadLeftRight : Node
-        {
+        public class PadDpadLeftRight : Node {
             public int GamepadIndex;
 
-            public PadDpadLeftRight(int gamepadIndex)
-            {
+            public PadDpadLeftRight(int gamepadIndex) {
                 GamepadIndex = gamepadIndex;
             }
 
-            public override float Value
-            {
-                get
-                {
+            public override float Value {
+                get {
                     if (MInput.GamePads[GamepadIndex].DPadRightCheck)
                         return 1f;
                     else if (MInput.GamePads[GamepadIndex].DPadLeftCheck)
@@ -156,19 +127,15 @@ namespace WeWereBound.Engine
             }
         }
 
-        public class PadDpadUpDown : Node
-        {
+        public class PadDpadUpDown : Node {
             public int GamepadIndex;
 
-            public PadDpadUpDown(int gamepadIndex)
-            {
+            public PadDpadUpDown(int gamepadIndex) {
                 GamepadIndex = gamepadIndex;
             }
 
-            public override float Value
-            {
-                get
-                {
+            public override float Value {
+                get {
                     if (MInput.GamePads[GamepadIndex].DPadDownCheck)
                         return 1f;
                     else if (MInput.GamePads[GamepadIndex].DPadUpCheck)
@@ -179,8 +146,7 @@ namespace WeWereBound.Engine
             }
         }
 
-        public class KeyboardKeys : Node
-        {
+        public class KeyboardKeys : Node {
             public OverlapBehaviors OverlapBehavior;
             public Keys Positive;
             public Keys Negative;
@@ -188,29 +154,23 @@ namespace WeWereBound.Engine
             private float value;
             private bool turned;
 
-            public KeyboardKeys(OverlapBehaviors overlapBehavior, Keys negative, Keys positive)
-            {
+            public KeyboardKeys(OverlapBehaviors overlapBehavior, Keys negative, Keys positive) {
                 OverlapBehavior = overlapBehavior;
                 Negative = negative;
                 Positive = positive;
             }
 
-            public override void Update()
-            {
-                if (MInput.Keyboard.Check(Positive))
-                {
-                    if (MInput.Keyboard.Check(Negative))
-                    {
-                        switch (OverlapBehavior)
-                        {
+            public override void Update() {
+                if (MInput.Keyboard.Check(Positive)) {
+                    if (MInput.Keyboard.Check(Negative)) {
+                        switch (OverlapBehavior) {
                             default:
                             case OverlapBehaviors.CancelOut:
                                 value = 0;
                                 break;
 
                             case OverlapBehaviors.TakeNewer:
-                                if (!turned)
-                                {
+                                if (!turned) {
                                     value *= -1;
                                     turned = true;
                                 }
@@ -220,27 +180,20 @@ namespace WeWereBound.Engine
                                 //value stays the same
                                 break;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         turned = false;
                         value = 1;
                     }
-                }
-                else if (MInput.Keyboard.Check(Negative))
-                {
+                } else if (MInput.Keyboard.Check(Negative)) {
                     turned = false;
                     value = -1;
-                }
-                else
-                {
+                } else {
                     turned = false;
                     value = 0;
                 }
             }
 
-            public override float Value
-            {
+            public override float Value {
                 get { return value; }
             }
         }

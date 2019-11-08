@@ -3,26 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace WeWereBound.Engine
-{
-    public class SpriteBank
-    {
+namespace WeWereBound.Engine {
+    public class SpriteBank {
         public Atlas Atlas;
         public XmlDocument XML;
         public Dictionary<string, SpriteData> SpriteData;
 
-        public SpriteBank(Atlas atlas, XmlDocument xml)
-        {
+        public SpriteBank(Atlas atlas, XmlDocument xml) {
             Atlas = atlas;
             XML = xml;
 
             SpriteData = new Dictionary<string, SpriteData>(StringComparer.OrdinalIgnoreCase);
 
             var elements = new Dictionary<string, XmlElement>();
-            foreach (var e in XML["Sprites"].ChildNodes)
-            {
-                if (e is XmlElement)
-                {
+            foreach (var e in XML["Sprites"].ChildNodes) {
+                if (e is XmlElement) {
                     var element = e as XmlElement;
                     elements.Add(element.Name, element);
 
@@ -37,19 +32,16 @@ namespace WeWereBound.Engine
 
         public SpriteBank(Atlas atlas, string xmlPath) : this(atlas, Calc.LoadContentXML(xmlPath)) { }
 
-        public bool Has(string id)
-        {
+        public bool Has(string id) {
             return SpriteData.ContainsKey(id);
         }
 
-        public Sprite Create(string id)
-        {
+        public Sprite Create(string id) {
             if (SpriteData.ContainsKey(id)) return SpriteData[id].Create();
-            else throw new Exception($"Missing animatino name in SpriteData: '{id}'");
+            else throw new Exception($"Missing animation name in SpriteData: '{id}'");
         }
 
-        public Sprite CreateOn(Sprite sprite, string id)
-        {
+        public Sprite CreateOn(Sprite sprite, string id) {
             if (SpriteData.ContainsKey(id)) return SpriteData[id].CreateOn(sprite);
             else throw new Exception($"Missing animation name in SpriteData: '{id}'");
         }

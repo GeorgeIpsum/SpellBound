@@ -3,29 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace WeWereBound.Engine
-{
-    public class SpriteDataSource
-    {
+namespace WeWereBound.Engine {
+    public class SpriteDataSource {
         public XmlElement XML;
         public string Path;
         public string OverridePath;
     }
 
-    public class SpriteData
-    {
+    public class SpriteData {
         public List<SpriteDataSource> Sources = new List<SpriteDataSource>();
         public Sprite Sprite;
         public Atlas Atlas;
 
-        public SpriteData(Atlas atlas)
-        {
+        public SpriteData(Atlas atlas) {
             Sprite = new Sprite(atlas, "");
             Atlas = atlas;
         }
 
-        public void Add(XmlElement xml, string overridePath = null)
-        {
+        public void Add(XmlElement xml, string overridePath = null) {
             var source = new SpriteDataSource();
             source.XML = xml;
             source.Path = source.XML.Attr("path");
@@ -61,8 +56,7 @@ namespace WeWereBound.Engine
                 var masterDelay = source.XML.AttrFloat("delay", 0);
 
                 //Build Animations
-                foreach (XmlElement anim in source.XML.GetElementsByTagName("Anim"))
-                {
+                foreach (XmlElement anim in source.XML.GetElementsByTagName("Anim")) {
                     Chooser<string> into;
                     if (anim.HasAttr("goto"))
                         into = Chooser<string>.FromString<string>(anim.Attr("goto"));
@@ -82,8 +76,7 @@ namespace WeWereBound.Engine
                 }
 
                 //Build Loops
-                foreach (XmlElement loop in source.XML.GetElementsByTagName("Loop"))
-                {
+                foreach (XmlElement loop in source.XML.GetElementsByTagName("Loop")) {
                     var id = loop.Attr("id");
                     var path = loop.Attr("path", "");
                     var frames = Calc.ReadCSVIntWithTricks(loop.Attr("frames", ""));
@@ -97,17 +90,13 @@ namespace WeWereBound.Engine
                 }
 
                 //Origin
-                if (source.XML.HasChild("Center"))
-                {
+                if (source.XML.HasChild("Center")) {
                     Sprite.CenterOrigin();
                     Sprite.Justify = new Vector2(.5f, .5f);
-                }
-                else if (source.XML.HasChild("Justify"))
-                {
+                } else if (source.XML.HasChild("Justify")) {
                     Sprite.JustifyOrigin(source.XML.ChildPosition("Justify"));
                     Sprite.Justify = source.XML.ChildPosition("Justify");
-                }
-                else if (source.XML.HasChild("Origin"))
+                } else if (source.XML.HasChild("Origin"))
                     Sprite.Origin = source.XML.ChildPosition("Origin");
 
                 //Position
@@ -122,12 +111,10 @@ namespace WeWereBound.Engine
             Sources.Add(source);
         }
 
-        private bool HasFrames(Atlas atlas, string path, int[] frames = null)
-        {
+        private bool HasFrames(Atlas atlas, string path, int[] frames = null) {
             if (frames == null || frames.Length <= 0)
                 return atlas.GetAtlasSubtexturesAt(path, 0) != null;
-            else
-            {
+            else {
                 for (int i = 0; i < frames.Length; i++)
                     if (atlas.GetAtlasSubtexturesAt(path, frames[i]) == null)
                         return false;
@@ -136,8 +123,7 @@ namespace WeWereBound.Engine
             }
         }
 
-        private void CheckAnimXML(XmlElement xml, string prefix, HashSet<string> ids)
-        {
+        private void CheckAnimXML(XmlElement xml, string prefix, HashSet<string> ids) {
             if (!xml.HasAttr("id"))
                 throw new Exception(prefix + "'id' is missing on " + xml.Name + "!");
 
@@ -147,13 +133,11 @@ namespace WeWereBound.Engine
             ids.Add(xml.Attr("id"));
         }
 
-        public Sprite Create()
-        {
+        public Sprite Create() {
             return Sprite.CreateClone();
         }
 
-        public Sprite CreateOn(Sprite sprite)
-        {
+        public Sprite CreateOn(Sprite sprite) {
             return Sprite.CloneInto(sprite);
         }
     }

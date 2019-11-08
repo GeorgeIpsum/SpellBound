@@ -1,18 +1,14 @@
 ﻿using System.Reflection;
 
-namespace WeWereBound.Engine
-{
-    public class MethodHandle<T> where T : Entity
-    {
+namespace WeWereBound.Engine {
+    public class MethodHandle<T> where T : Entity {
         private MethodInfo info;
 
-        public MethodHandle(string methodName)
-        {
+        public MethodHandle(string methodName) {
             info = typeof(T).GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic);
         }
 
-        public void Call(T instance)
-        {
+        public void Call(T instance) {
             info.Invoke(instance, null);
         }
     }

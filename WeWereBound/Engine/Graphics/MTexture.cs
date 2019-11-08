@@ -5,12 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
-namespace WeWereBound.Engine
-{
-    public class MTexture
-    {
-        static public MTexture FromFile(string filename)
-        {
+namespace WeWereBound.Engine {
+    public class MTexture {
+        static public MTexture FromFile(string filename) {
             var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
             var texture = Texture2D.FromStream(GameEngine.Instance.GraphicsDevice, fileStream);
             fileStream.Close();
@@ -20,8 +17,7 @@ namespace WeWereBound.Engine
 
         public MTexture() { }
 
-        public MTexture(Texture2D texture)
-        {
+        public MTexture(Texture2D texture) {
             Texture = texture;
             AtlasPath = null;
             ClipRect = new Rectangle(0, 0, Texture.Width, Texture.Height);
@@ -31,8 +27,7 @@ namespace WeWereBound.Engine
             SetUtil();
         }
 
-        public MTexture(MTexture parent, int x, int y, int width, int height)
-        {
+        public MTexture(MTexture parent, int x, int y, int width, int height) {
             Texture = parent.Texture;
             AtlasPath = null;
 
@@ -46,8 +41,7 @@ namespace WeWereBound.Engine
         public MTexture(MTexture parent, Rectangle clipRect)
             : this(parent, clipRect.X, clipRect.Y, clipRect.Width, clipRect.Height) { }
 
-        public MTexture(MTexture parent, string atlasPath, Rectangle clipRect, Vector2 drawOffset, int width, int height)
-        {
+        public MTexture(MTexture parent, string atlasPath, Rectangle clipRect, Vector2 drawOffset, int width, int height) {
             Texture = parent.Texture;
             AtlasPath = atlasPath;
 
@@ -58,13 +52,11 @@ namespace WeWereBound.Engine
             SetUtil();
         }
 
-        public MTexture(MTexture parent, string atlasPath, Rectangle clipRect) : this(parent, clipRect)
-        {
+        public MTexture(MTexture parent, string atlasPath, Rectangle clipRect) : this(parent, clipRect) {
             AtlasPath = atlasPath;
         }
 
-        public MTexture(Texture2D texture, Vector2 drawOffset, int frameWidth, int frameHeight)
-        {
+        public MTexture(Texture2D texture, Vector2 drawOffset, int frameWidth, int frameHeight) {
             Texture = texture;
             ClipRect = new Rectangle(0, 0, texture.Width, texture.Height);
             DrawOffset = drawOffset;
@@ -73,8 +65,7 @@ namespace WeWereBound.Engine
             SetUtil();
         }
 
-        public MTexture(int width, int height, Color color)
-        {
+        public MTexture(int width, int height, Color color) {
             Texture = new Texture2D(GameEngine.Instance.GraphicsDevice, width, height);
             var colors = new Color[width * height];
             for (int i = 0; i < width * height; i++) colors[i] = color;
@@ -87,8 +78,7 @@ namespace WeWereBound.Engine
             SetUtil();
         }
 
-        private void SetUtil()
-        {
+        private void SetUtil() {
             Center = new Vector2(Width, Height) * 0.5f;
             LeftUV = ClipRect.Left / (float)Texture.Width;
             RightUV = ClipRect.Right / (float)Texture.Width;
@@ -96,17 +86,14 @@ namespace WeWereBound.Engine
             BottomUV = ClipRect.Bottom / (float)Texture.Height;
         }
 
-        public void Unload()
-        {
+        public void Unload() {
             Texture.Dispose();
             Texture = null;
         }
 
-        public MTexture GetSubtexture(int x, int y, int width, int height, MTexture applyTo = null)
-        {
+        public MTexture GetSubtexture(int x, int y, int width, int height, MTexture applyTo = null) {
             if (applyTo == null) return new MTexture(this, x, y, width, height);
-            else
-            {
+            else {
                 applyTo.Texture = Texture;
                 applyTo.AtlasPath = null;
 
@@ -120,13 +107,11 @@ namespace WeWereBound.Engine
             }
         }
 
-        public MTexture GetSubtexture(Rectangle rect)
-        {
+        public MTexture GetSubtexture(Rectangle rect) {
             return new MTexture(this, rect);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Texture.Dispose();
         }
 
@@ -148,14 +133,12 @@ namespace WeWereBound.Engine
 
         #region Helpers
 
-        public override string ToString()
-        {
+        public override string ToString() {
             if (AtlasPath != null) return AtlasPath;
             else return $"MTexture[{Texture.Width} x {Texture.Height}]";
         }
 
-        public Rectangle GetRelativeRect(int x, int y, int width, int height)
-        {
+        public Rectangle GetRelativeRect(int x, int y, int width, int height) {
             int atX = (int)(ClipRect.X - DrawOffset.X + x);
             int atY = (int)(ClipRect.Y - DrawOffset.Y + y);
 
@@ -167,22 +150,19 @@ namespace WeWereBound.Engine
             return new Rectangle(rX, rY, rW, rH);
         }
 
-        public Rectangle GetRelativeRect(Rectangle rect)
-        {
+        public Rectangle GetRelativeRect(Rectangle rect) {
             return GetRelativeRect(rect.X, rect.Y, rect.Width, rect.Height);
         }
 
-        public int TotalPixels
-        {
-            get { return Width * Height;  }
+        public int TotalPixels {
+            get { return Width * Height; }
         }
 
         #endregion
 
         #region Draw
 
-        public void Draw(Vector2 position)
-        {
+        public void Draw(Vector2 position) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -190,8 +170,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, Color.White, 0, -DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void Draw(Vector2 position, Vector2 origin)
-        {
+        public void Draw(Vector2 position, Vector2 origin) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -199,8 +178,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, Color.White, 0, origin - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void Draw(Vector2 position, Vector2 origin, Color color)
-        {
+        public void Draw(Vector2 position, Vector2 origin, Color color) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -208,8 +186,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, origin - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void Draw(Vector2 position, Vector2 origin, Color color, float scale)
-        {
+        public void Draw(Vector2 position, Vector2 origin, Color color, float scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -217,8 +194,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, origin - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void Draw(Vector2 position, Vector2 origin, Color color, float scale, float rotation)
-        {
+        public void Draw(Vector2 position, Vector2 origin, Color color, float scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -226,40 +202,35 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, origin - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void Draw(Vector2 position, Vector2 origin, Color color, float scale, float rotation, SpriteEffects flip)
-        {
+        public void Draw(Vector2 position, Vector2 origin, Color color, float scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, origin - DrawOffset, scale, flip, 0);
         }
 
-        public void Draw(Vector2 position, Vector2 origin, Color color, Vector2 scale)
-        {
+        public void Draw(Vector2 position, Vector2 origin, Color color, Vector2 scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, origin - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void Draw(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation)
-        {
+        public void Draw(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, origin - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void Draw(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation, SpriteEffects flip)
-        {
+        public void Draw(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, origin - DrawOffset, scale, flip, 0);
         }
 
-        public void Draw(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation, Rectangle clip)
-        {
+        public void Draw(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation, Rectangle clip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -270,64 +241,56 @@ namespace WeWereBound.Engine
 
         #region Draw Centered
 
-        public void DrawCentered(Vector2 position)
-        {
+        public void DrawCentered(Vector2 position) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, Color.White, 0, Center - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawCentered(Vector2 position, Color color)
-        {
+        public void DrawCentered(Vector2 position, Color color) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, Center - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawCentered(Vector2 position, Color color, float scale)
-        {
+        public void DrawCentered(Vector2 position, Color color, float scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, Center - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawCentered(Vector2 position, Color color, float scale, float rotation)
-        {
+        public void DrawCentered(Vector2 position, Color color, float scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, Center - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawCentered(Vector2 position, Color color, float scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawCentered(Vector2 position, Color color, float scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, Center - DrawOffset, scale, flip, 0);
         }
 
-        public void DrawCentered(Vector2 position, Color color, Vector2 scale)
-        {
+        public void DrawCentered(Vector2 position, Color color, Vector2 scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, Center - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawCentered(Vector2 position, Color color, Vector2 scale, float rotation)
-        {
+        public void DrawCentered(Vector2 position, Color color, Vector2 scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, Center - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawCentered(Vector2 position, Color color, Vector2 scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawCentered(Vector2 position, Color color, Vector2 scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -338,64 +301,56 @@ namespace WeWereBound.Engine
 
         #region Draw Justified
 
-        public void DrawJustified(Vector2 position, Vector2 justify)
-        {
+        public void DrawJustified(Vector2 position, Vector2 justify) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, Color.White, 0, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawJustified(Vector2 position, Vector2 justify, Color color)
-        {
+        public void DrawJustified(Vector2 position, Vector2 justify, Color color) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawJustified(Vector2 position, Vector2 justify, Color color, float scale)
-        {
+        public void DrawJustified(Vector2 position, Vector2 justify, Color color, float scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawJustified(Vector2 position, Vector2 justify, Color color, float scale, float rotation)
-        {
+        public void DrawJustified(Vector2 position, Vector2 justify, Color color, float scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawJustified(Vector2 position, Vector2 justify, Color color, float scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawJustified(Vector2 position, Vector2 justify, Color color, float scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, flip, 0);
         }
 
-        public void DrawJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale)
-        {
+        public void DrawJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale, float rotation)
-        {
+        public void DrawJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -406,8 +361,7 @@ namespace WeWereBound.Engine
 
         #region Draw Outline
 
-        public void DrawOutline(Vector2 position)
-        {
+        public void DrawOutline(Vector2 position) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -420,8 +374,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, Color.White, 0, -DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawOutline(Vector2 position, Vector2 origin)
-        {
+        public void DrawOutline(Vector2 position, Vector2 origin) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -434,8 +387,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, Color.White, 0, origin - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawOutline(Vector2 position, Vector2 origin, Color color)
-        {
+        public void DrawOutline(Vector2 position, Vector2 origin, Color color) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -448,8 +400,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, origin - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawOutline(Vector2 position, Vector2 origin, Color color, float scale)
-        {
+        public void DrawOutline(Vector2 position, Vector2 origin, Color color, float scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -462,8 +413,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, origin - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutline(Vector2 position, Vector2 origin, Color color, float scale, float rotation)
-        {
+        public void DrawOutline(Vector2 position, Vector2 origin, Color color, float scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -476,8 +426,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, origin - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutline(Vector2 position, Vector2 origin, Color color, float scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawOutline(Vector2 position, Vector2 origin, Color color, float scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -490,8 +439,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, origin - DrawOffset, scale, flip, 0);
         }
 
-        public void DrawOutline(Vector2 position, Vector2 origin, Color color, Vector2 scale)
-        {
+        public void DrawOutline(Vector2 position, Vector2 origin, Color color, Vector2 scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -504,8 +452,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, origin - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutline(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation)
-        {
+        public void DrawOutline(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -518,8 +465,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, origin - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutline(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawOutline(Vector2 position, Vector2 origin, Color color, Vector2 scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -536,8 +482,7 @@ namespace WeWereBound.Engine
 
         #region Draw Outline Centered
 
-        public void DrawOutlineCentered(Vector2 position)
-        {
+        public void DrawOutlineCentered(Vector2 position) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -550,8 +495,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, Color.White, 0, Center - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineCentered(Vector2 position, Color color)
-        {
+        public void DrawOutlineCentered(Vector2 position, Color color) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -564,8 +508,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, Center - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineCentered(Vector2 position, Color color, float scale)
-        {
+        public void DrawOutlineCentered(Vector2 position, Color color, float scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -578,8 +521,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, Center - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineCentered(Vector2 position, Color color, float scale, float rotation)
-        {
+        public void DrawOutlineCentered(Vector2 position, Color color, float scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -592,8 +534,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, Center - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineCentered(Vector2 position, Color color, float scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawOutlineCentered(Vector2 position, Color color, float scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -606,8 +547,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, Center - DrawOffset, scale, flip, 0);
         }
 
-        public void DrawOutlineCentered(Vector2 position, Color color, Vector2 scale)
-        {
+        public void DrawOutlineCentered(Vector2 position, Color color, Vector2 scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -620,8 +560,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, Center - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineCentered(Vector2 position, Color color, Vector2 scale, float rotation)
-        {
+        public void DrawOutlineCentered(Vector2 position, Color color, Vector2 scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -634,8 +573,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, Center - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineCentered(Vector2 position, Color color, Vector2 scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawOutlineCentered(Vector2 position, Color color, Vector2 scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -652,8 +590,7 @@ namespace WeWereBound.Engine
 
         #region Draw Outline Justified
 
-        public void DrawOutlineJustified(Vector2 position, Vector2 justify)
-        {
+        public void DrawOutlineJustified(Vector2 position, Vector2 justify) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -666,8 +603,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, Color.White, 0, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color)
-        {
+        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -680,8 +616,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, 1f, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, float scale)
-        {
+        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, float scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -694,8 +629,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, float scale, float rotation)
-        {
+        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, float scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -708,8 +642,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, float scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, float scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -722,8 +655,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, flip, 0);
         }
 
-        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale)
-        {
+        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -736,8 +668,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, 0, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale, float rotation)
-        {
+        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale, float rotation) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif
@@ -750,8 +681,7 @@ namespace WeWereBound.Engine
             Engine.Draw.SpriteBatch.Draw(Texture, position, ClipRect, color, rotation, new Vector2(Width * justify.X, Height * justify.Y) - DrawOffset, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale, float rotation, SpriteEffects flip)
-        {
+        public void DrawOutlineJustified(Vector2 position, Vector2 justify, Color color, Vector2 scale, float rotation, SpriteEffects flip) {
 #if DEBUG
             if (Texture.IsDisposed) throw new Exception("Texture2D Is Disposed");
 #endif

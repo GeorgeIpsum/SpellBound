@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace WeWereBound.Engine
-{
-    public class ShakerList : Component
-    {
+namespace WeWereBound.Engine {
+    public class ShakerList : Component {
         public Vector2[] Values;
         public float Interval = .05f;
         public float Timer;
@@ -14,35 +12,28 @@ namespace WeWereBound.Engine
         private bool on;
 
         public ShakerList(int length, bool on = true, Action<Vector2[]> onShake = null)
-            : base(true, false)
-        {
+            : base(true, false) {
             Values = new Vector2[length];
             this.on = on;
             OnShake = onShake;
         }
 
         public ShakerList(int length, float time, bool removeOnFinish, Action<Vector2[]> onShake = null)
-            : this(length, true, onShake)
-        {
+            : this(length, true, onShake) {
             Timer = time;
             RemoveOnFinish = removeOnFinish;
         }
 
-        public bool On
-        {
-            get
-            {
+        public bool On {
+            get {
                 return on;
             }
 
-            set
-            {
+            set {
                 on = value;
-                if (!on)
-                {
+                if (!on) {
                     Timer = 0;
-                    if (Values[0] != Vector2.Zero)
-                    {
+                    if (Values[0] != Vector2.Zero) {
                         for (var i = 0; i < Values.Length; i++)
                             Values[i] = Vector2.Zero;
                         if (OnShake != null)
@@ -52,8 +43,7 @@ namespace WeWereBound.Engine
             }
         }
 
-        public ShakerList ShakeFor(float seconds, bool removeOnFinish)
-        {
+        public ShakerList ShakeFor(float seconds, bool removeOnFinish) {
             on = true;
             Timer = seconds;
             RemoveOnFinish = removeOnFinish;
@@ -61,13 +51,10 @@ namespace WeWereBound.Engine
             return this;
         }
 
-        public override void Update()
-        {
-            if (on && Timer > 0)
-            {
+        public override void Update() {
+            if (on && Timer > 0) {
                 Timer -= GameEngine.DeltaTime;
-                if (Timer <= 0)
-                {
+                if (Timer <= 0) {
                     on = false;
                     for (var i = 0; i < Values.Length; i++)
                         Values[i] = Vector2.Zero;
@@ -79,8 +66,7 @@ namespace WeWereBound.Engine
                 }
             }
 
-            if (on && Scene.OnInterval(Interval))
-            {
+            if (on && Scene.OnInterval(Interval)) {
                 for (var i = 0; i < Values.Length; i++)
                     Values[i] = Calc.Random.ShakeVector();
                 if (OnShake != null)

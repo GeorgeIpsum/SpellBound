@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace WeWereBound.Engine
-{
-    public class ParticleType
-    {
+namespace WeWereBound.Engine {
+    public class ParticleType {
         public enum ColorModes { Static, Choose, Blink, Fade };
         public enum FadeModes { None, Linear, Late, InAndOut };
         public enum RotationModes { None, Random, SameAsDirection };
@@ -35,8 +33,7 @@ namespace WeWereBound.Engine
         public bool ScaleOut;
         public bool UseActualDeltaTime;
 
-        public ParticleType()
-        {
+        public ParticleType() {
             Color = Color2 = Color.White;
             ColorMode = ColorModes.Static;
             FadeMode = FadeModes.None;
@@ -55,8 +52,7 @@ namespace WeWereBound.Engine
             AllTypes.Add(this);
         }
 
-        public ParticleType(ParticleType copyFrom)
-        {
+        public ParticleType(ParticleType copyFrom) {
             Source = copyFrom.Source;
             SourceChooser = copyFrom.SourceChooser;
             Color = copyFrom.Color;
@@ -84,28 +80,23 @@ namespace WeWereBound.Engine
             AllTypes.Add(this);
         }
 
-        public Particle Create(ref Particle particle, Vector2 position)
-        {
+        public Particle Create(ref Particle particle, Vector2 position) {
             return Create(ref particle, position, Direction);
         }
 
-        public Particle Create(ref Particle particle, Vector2 position, Color color)
-        {
+        public Particle Create(ref Particle particle, Vector2 position, Color color) {
             return Create(ref particle, null, position, Direction, color);
         }
 
-        public Particle Create(ref Particle particle, Vector2 position, float direction)
-        {
+        public Particle Create(ref Particle particle, Vector2 position, float direction) {
             return Create(ref particle, null, position, direction, Color);
         }
 
-        public Particle Create(ref Particle particle, Vector2 position, Color color, float direction)
-        {
+        public Particle Create(ref Particle particle, Vector2 position, Color color, float direction) {
             return Create(ref particle, null, position, direction, color);
         }
 
-        public Particle Create(ref Particle particle, Entity entity, Vector2 position, float direction, Color color)
-        {
+        public Particle Create(ref Particle particle, Entity entity, Vector2 position, float direction, Color color) {
             particle.Track = entity;
             particle.Type = this;
             particle.Active = true;

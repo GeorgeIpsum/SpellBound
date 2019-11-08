@@ -1,13 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace WeWereBound.Engine
-{
-    public class PixelText : Component
-    {
+namespace WeWereBound.Engine {
+    public class PixelText : Component {
 
-        private struct Char
-        {
+        private struct Char {
             public Vector2 Offset;
             public PixelFontCharacter CharData;
             public Rectangle Bounds;
@@ -19,33 +16,27 @@ namespace WeWereBound.Engine
         private string text;
         private bool dirty;
 
-        public PixelFont Font
-        {
+        public PixelFont Font {
             get { return font; }
-            set
-            {
+            set {
                 if (value != font)
                     dirty = true;
                 font = value;
             }
         }
 
-        public float Size
-        {
+        public float Size {
             get { return size.Size; }
-            set
-            {
+            set {
                 if (value != size.Size)
                     dirty = true;
                 size = font.Get(value);
             }
         }
 
-        public string Text
-        {
+        public string Text {
             get { return text; }
-            set
-            {
+            set {
                 if (value != text)
                     dirty = true;
                 text = value;
@@ -59,8 +50,7 @@ namespace WeWereBound.Engine
         public int Height { get; private set; }
 
         public PixelText(PixelFont font, string text, Color color)
-            : base(false, true)
-        {
+            : base(false, true) {
             Font = font;
             Text = text;
             Color = color;
@@ -69,8 +59,7 @@ namespace WeWereBound.Engine
             Refresh();
         }
 
-        public void Refresh()
-        {
+        public void Refresh() {
             dirty = false;
             characters.Clear();
 
@@ -78,11 +67,9 @@ namespace WeWereBound.Engine
             var lines = 1;
             var offset = Vector2.Zero;
 
-            for (int i = 0; i < text.Length; i++)
-            {
+            for (int i = 0; i < text.Length; i++) {
                 // new line
-                if (text[i] == '\n')
-                {
+                if (text[i] == '\n') {
                     offset.X = 0;
                     offset.Y += size.LineHeight;
                     lines++;
@@ -90,10 +77,8 @@ namespace WeWereBound.Engine
 
                 // add char
                 var fontChar = size.Get(text[i]);
-                if (fontChar != null)
-                {
-                    characters.Add(new Char()
-                    {
+                if (fontChar != null) {
+                    characters.Add(new Char() {
                         Offset = offset + new Vector2(fontChar.XOffset, fontChar.YOffset),
                         CharData = fontChar,
                         Bounds = fontChar.Texture.ClipRect,
@@ -109,8 +94,7 @@ namespace WeWereBound.Engine
             Height = lines * size.LineHeight;
         }
 
-        public override void Render()
-        {
+        public override void Render() {
             if (dirty)
                 Refresh();
 

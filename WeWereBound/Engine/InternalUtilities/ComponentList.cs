@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WeWereBound.Engine
-{
-    public class ComponentList : IEnumerable<Component>, IEnumerable
-    {
+namespace WeWereBound.Engine {
+    public class ComponentList : IEnumerable<Component>, IEnumerable {
         public enum LockModes { Open, Locked, Error };
         public Entity Entity { get; internal set; }
 
@@ -20,8 +18,7 @@ namespace WeWereBound.Engine
 
         private LockModes lockMode;
 
-        internal ComponentList(Entity entity)
-        {
+        internal ComponentList(Entity entity) {
             Entity = entity;
 
             components = new List<Component>();
@@ -33,23 +30,17 @@ namespace WeWereBound.Engine
             removing = new HashSet<Component>();
         }
 
-        internal LockModes LockMode
-        {
-            get
-            {
+        internal LockModes LockMode {
+            get {
                 return lockMode;
             }
 
-            set
-            {
+            set {
                 lockMode = value;
 
-                if (toAdd.Count > 0)
-                {
-                    foreach (var component in toAdd)
-                    {
-                        if(!current.Contains(component))
-                        {
+                if (toAdd.Count > 0) {
+                    foreach (var component in toAdd) {
+                        if (!current.Contains(component)) {
                             current.Add(component);
                             components.Add(component);
                             component.Added(Entity);
@@ -60,12 +51,9 @@ namespace WeWereBound.Engine
                     toAdd.Clear();
                 }
 
-                if (toRemove.Count > 0)
-                {
-                    foreach (var component in toRemove)
-                    {
-                        if (current.Contains(component))
-                        {
+                if (toRemove.Count > 0) {
+                    foreach (var component in toRemove) {
+                        if (current.Contains(component)) {
                             current.Remove(component);
                             components.Remove(component);
                             component.Removed(Entity);
@@ -78,13 +66,10 @@ namespace WeWereBound.Engine
             }
         }
 
-        public void Add(Component component)
-        {
-            switch (lockMode)
-            {
+        public void Add(Component component) {
+            switch (lockMode) {
                 case LockModes.Open:
-                    if(!current.Contains(component))
-                    {
+                    if (!current.Contains(component)) {
                         current.Add(component);
                         components.Add(component);
                         component.Added(Entity);
@@ -92,8 +77,7 @@ namespace WeWereBound.Engine
                     break;
 
                 case LockModes.Locked:
-                    if(!current.Contains(component) && !adding.Contains(component))
-                    {
+                    if (!current.Contains(component) && !adding.Contains(component)) {
                         adding.Add(component);
                         toAdd.Add(component);
                     }
@@ -104,13 +88,10 @@ namespace WeWereBound.Engine
             }
         }
 
-        public void Remove(Component component)
-        {
-            switch (lockMode)
-            {
+        public void Remove(Component component) {
+            switch (lockMode) {
                 case LockModes.Open:
-                    if(current.Contains(component))
-                    {
+                    if (current.Contains(component)) {
                         current.Remove(component);
                         components.Remove(component);
                         component.Removed(Entity);
@@ -118,8 +99,7 @@ namespace WeWereBound.Engine
                     break;
 
                 case LockModes.Locked:
-                    if(current.Contains(component) && !removing.Contains(component))
-                    {
+                    if (current.Contains(component) && !removing.Contains(component)) {
                         removing.Add(component);
                         toRemove.Add(component);
                     }
@@ -130,65 +110,52 @@ namespace WeWereBound.Engine
             }
         }
 
-        public void Add(IEnumerable<Component> components)
-        {
+        public void Add(IEnumerable<Component> components) {
             foreach (var component in components) Add(component);
         }
 
-        public void Remove(IEnumerable<Component> components)
-        {
+        public void Remove(IEnumerable<Component> components) {
             foreach (var component in components) Remove(component);
         }
 
-        public void RemoveAll<T>() where T : Component
-        {
+        public void RemoveAll<T>() where T : Component {
             Remove(GetAll<T>());
         }
 
-        public void Add(params Component[] components)
-        {
+        public void Add(params Component[] components) {
             foreach (var component in components) Add(component);
         }
 
-        public void Remove(params Component[] components)
-        {
+        public void Remove(params Component[] components) {
             foreach (var component in components) Remove(component);
         }
 
-        public int Count
-        {
-            get
-            {
+        public int Count {
+            get {
                 return components.Count;
             }
         }
 
-        public Component this[int index]
-        {
-            get
-            {
+        public Component this[int index] {
+            get {
                 if (index < 0 || index >= components.Count) throw new IndexOutOfRangeException();
                 else return components[index];
             }
         }
 
-        public IEnumerator<Component> GetEnumerator()
-        {
+        public IEnumerator<Component> GetEnumerator() {
             return components.GetEnumerator();
         }
 
-        IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
+        IEnumerator System.Collections.IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
 
-        public Component[] ToArray()
-        {
+        public Component[] ToArray() {
             return components.ToArray<Component>();
         }
 
-        internal void Update()
-        {
+        internal void Update() {
             LockMode = ComponentList.LockModes.Locked;
             foreach (var component in components)
                 if (component.Active) component.Update();
@@ -196,8 +163,7 @@ namespace WeWereBound.Engine
             LockMode = ComponentList.LockModes.Open;
         }
 
-        internal void Render()
-        {
+        internal void Render() {
             LockMode = ComponentList.LockModes.Error;
             foreach (var component in components)
                 if (component.Visible) component.Render();
@@ -205,40 +171,35 @@ namespace WeWereBound.Engine
             LockMode = ComponentList.LockModes.Open;
         }
 
-        internal void DebugRender(Camera camera)
-        {
+        internal void DebugRender(Camera camera) {
             LockMode = ComponentList.LockModes.Error;
             foreach (var component in components) component.DebugRender(camera);
 
             LockMode = ComponentList.LockModes.Open;
         }
 
-        internal void HandleGraphicsCreate()
-        {
+        internal void HandleGraphicsCreate() {
             LockMode = ComponentList.LockModes.Error;
             foreach (var component in components) component.HandleGraphicsCreate();
 
             LockMode = ComponentList.LockModes.Open;
         }
 
-        internal void HandleGraphicsReset()
-        {
+        internal void HandleGraphicsReset() {
             LockMode = ComponentList.LockModes.Error;
             foreach (var component in components) component.HandleGraphicsReset();
 
             LockMode = ComponentList.LockModes.Open;
         }
 
-        public T Get<T>() where T : Component
-        {
+        public T Get<T>() where T : Component {
             foreach (var component in components)
                 if (component is T) return component as T;
 
             return null;
         }
 
-        public IEnumerable<T> GetAll<T>() where T : Component
-        {
+        public IEnumerable<T> GetAll<T>() where T : Component {
             foreach (var component in components)
                 if (component is T) yield return component as T;
         }

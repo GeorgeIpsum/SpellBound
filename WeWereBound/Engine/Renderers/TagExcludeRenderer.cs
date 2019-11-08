@@ -4,31 +4,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WeWereBound.Engine
-{
-    public class TagExcludeRenderer : Renderer
-    {
+namespace WeWereBound.Engine {
+    public class TagExcludeRenderer : Renderer {
         public BlendState BlendState;
         public SamplerState SamplerState;
         public Effect Effect;
         public Camera Camera;
         public int ExcludeTag;
 
-        public TagExcludeRenderer(int excludeTag)
-        {
+        public TagExcludeRenderer(int excludeTag) {
             ExcludeTag = excludeTag;
             BlendState = BlendState.AlphaBlend;
             SamplerState = SamplerState.LinearClamp;
             Camera = new Camera();
         }
 
-        public override void BeforeRender(Scene scene)
-        {
+        public override void BeforeRender(Scene scene) {
 
         }
 
-        public override void Render(Scene scene)
-        {
+        public override void Render(Scene scene) {
             Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState, SamplerState, DepthStencilState.None, RasterizerState.CullNone, Effect, Camera.Matrix * GameEngine.ScreenMatrix);
 
             foreach (var entity in scene.Entities)
@@ -43,8 +38,7 @@ namespace WeWereBound.Engine
             Draw.SpriteBatch.End();
         }
 
-        public override void AfterRender(Scene scene)
-        {
+        public override void AfterRender(Scene scene) {
 
         }
     }

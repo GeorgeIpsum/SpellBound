@@ -4,10 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace WeWereBound.Engine
-{
-    public class Sprite : Image
-    {
+namespace WeWereBound.Engine {
+    public class Sprite : Image {
         public float Rate = 1f;
         public bool UseRawDeltaTime;
         public Vector2? Justify;
@@ -26,16 +24,14 @@ namespace WeWereBound.Engine
         private int height;
 
         public Sprite(Atlas atlas, string path)
-            : base(null, true)
-        {
+            : base(null, true) {
             this.atlas = atlas;
             this.Path = path;
             animations = new Dictionary<string, Animation>(StringComparer.OrdinalIgnoreCase);
             CurrentAnimationID = "";
         }
 
-        public void Reset(Atlas atlas, string path)
-        {
+        public void Reset(Atlas atlas, string path) {
             this.atlas = atlas;
             this.Path = path;
             animations = new Dictionary<string, Animation>(StringComparer.OrdinalIgnoreCase);
@@ -49,23 +45,18 @@ namespace WeWereBound.Engine
             Animating = false;
         }
 
-        public MTexture GetFrame(string animation, int frame)
-        {
+        public MTexture GetFrame(string animation, int frame) {
             return animations[animation].Frames[frame];
         }
 
-        public Vector2 Center
-        {
-            get
-            {
+        public Vector2 Center {
+            get {
                 return new Vector2(Width / 2, Height / 2);
             }
         }
 
-        public override void Update()
-        {
-            if (Animating)
-            {
+        public override void Update() {
+            if (Animating) {
                 //Timer
                 if (UseRawDeltaTime)
                     animationTimer += GameEngine.RawDeltaTime * Rate;
@@ -73,24 +64,20 @@ namespace WeWereBound.Engine
                     animationTimer += GameEngine.DeltaTime * Rate;
 
                 //Next Frame
-                if (Math.Abs(animationTimer) >= currentAnimation.Delay)
-                {
+                if (Math.Abs(animationTimer) >= currentAnimation.Delay) {
                     CurrentAnimationFrame += Math.Sign(animationTimer);
                     animationTimer -= Math.Sign(animationTimer) * currentAnimation.Delay;
 
                     //End of Animation
-                    if (CurrentAnimationFrame < 0 || CurrentAnimationFrame >= currentAnimation.Frames.Length)
-                    {
+                    if (CurrentAnimationFrame < 0 || CurrentAnimationFrame >= currentAnimation.Frames.Length) {
                         var was = CurrentAnimationID;
                         if (OnLastFrame != null)
                             OnLastFrame(CurrentAnimationID);
 
                         // only do stuff if OnLastFrame didn't just change the animation
-                        if (was == CurrentAnimationID)
-                        {
+                        if (was == CurrentAnimationID) {
                             //Looped
-                            if (currentAnimation.Goto != null)
-                            {
+                            if (currentAnimation.Goto != null) {
                                 CurrentAnimationID = currentAnimation.Goto.Choose();
 
                                 if (OnChange != null)
@@ -106,9 +93,7 @@ namespace WeWereBound.Engine
                                 SetFrame(currentAnimation.Frames[CurrentAnimationFrame]);
                                 if (OnLoop != null)
                                     OnLoop(CurrentAnimationID);
-                            }
-                            else
-                            {
+                            } else {
                                 //Ended
                                 if (CurrentAnimationFrame < 0)
                                     CurrentAnimationFrame = 0;
@@ -124,9 +109,7 @@ namespace WeWereBound.Engine
                                     OnFinish(id);
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         //Continue Animation
                         SetFrame(currentAnimation.Frames[CurrentAnimationFrame]);
                     }
@@ -134,8 +117,7 @@ namespace WeWereBound.Engine
             }
         }
 
-        private void SetFrame(MTexture texture)
-        {
+        private void SetFrame(MTexture texture) {
             if (texture == Texture)
                 return;
 
@@ -146,8 +128,7 @@ namespace WeWereBound.Engine
                 OnFrameChange(CurrentAnimationID);
         }
 
-        public void SetAnimationFrame(int frame)
-        {
+        public void SetAnimationFrame(int frame) {
             animationTimer = 0;
             CurrentAnimationFrame = frame % currentAnimation.Frames.Length;
             SetFrame(currentAnimation.Frames[CurrentAnimationFrame]);
@@ -155,108 +136,87 @@ namespace WeWereBound.Engine
 
         #region Define Animations
 
-        public void AddLoop(string id, string path, float delay)
-        {
-            animations[id] = new Animation()
-            {
+        public void AddLoop(string id, string path, float delay) {
+            animations[id] = new Animation() {
                 Delay = delay,
                 Frames = GetFrames(path),
                 Goto = new Chooser<string>(id, 1f)
             };
         }
 
-        public void AddLoop(string id, string path, float delay, params int[] frames)
-        {
-            animations[id] = new Animation()
-            {
+        public void AddLoop(string id, string path, float delay, params int[] frames) {
+            animations[id] = new Animation() {
                 Delay = delay,
                 Frames = GetFrames(path, frames),
                 Goto = new Chooser<string>(id, 1f)
             };
         }
 
-        public void Add(string id, string path)
-        {
-            animations[id] = new Animation()
-            {
+        public void Add(string id, string path) {
+            animations[id] = new Animation() {
                 Delay = 0,
                 Frames = GetFrames(path),
                 Goto = null
             };
         }
 
-        public void Add(string id, string path, float delay)
-        {
-            animations[id] = new Animation()
-            {
+        public void Add(string id, string path, float delay) {
+            animations[id] = new Animation() {
                 Delay = delay,
                 Frames = GetFrames(path),
                 Goto = null
             };
         }
 
-        public void Add(string id, string path, float delay, params int[] frames)
-        {
-            animations[id] = new Animation()
-            {
+        public void Add(string id, string path, float delay, params int[] frames) {
+            animations[id] = new Animation() {
                 Delay = delay,
                 Frames = GetFrames(path, frames),
                 Goto = null
             };
         }
 
-        public void Add(string id, string path, float delay, string into)
-        {
-            animations[id] = new Animation()
-            {
+        public void Add(string id, string path, float delay, string into) {
+            animations[id] = new Animation() {
                 Delay = delay,
                 Frames = GetFrames(path),
                 Goto = Chooser<string>.FromString<string>(into)
             };
         }
 
-        public void Add(string id, string path, float delay, Chooser<string> into)
-        {
-            animations[id] = new Animation()
-            {
+        public void Add(string id, string path, float delay, Chooser<string> into) {
+            animations[id] = new Animation() {
                 Delay = delay,
                 Frames = GetFrames(path),
                 Goto = into
             };
         }
 
-        public void Add(string id, string path, float delay, string into, params int[] frames)
-        {
-            animations[id] = new Animation()
-            {
+        public void Add(string id, string path, float delay, string into, params int[] frames) {
+            animations[id] = new Animation() {
                 Delay = delay,
                 Frames = GetFrames(path, frames),
                 Goto = Chooser<string>.FromString<string>(into)
             };
         }
 
-        public void Add(string id, string path, float delay, Chooser<string> into, params int[] frames)
-        {
-            animations[id] = new Animation()
-            {
+        public void Add(string id, string path, float delay, Chooser<string> into, params int[] frames) {
+            animations[id] = new Animation() {
                 Delay = delay,
                 Frames = GetFrames(path, frames),
                 Goto = into
             };
         }
 
-        private MTexture[] GetFrames(string path, int[] frames = null)
-        {
+        private MTexture[] GetFrames(string path, int[] frames = null) {
             MTexture[] ret;
 
             if (frames == null || frames.Length <= 0)
                 ret = atlas.GetAtlasSubtextures(this.Path + path).ToArray();
-            else
-            {
+            else {
                 var fullPath = this.Path + path;
                 var finalFrames = new MTexture[frames.Length];
-                for (int i = 0; i < frames.Length; i++)
-                {
+                for (int i = 0; i < frames.Length; i++) {
                     var frame = atlas.GetAtlasSubtexturesAt(fullPath, frames[i]);
                     if (frame == null)
 
@@ -277,8 +237,7 @@ namespace WeWereBound.Engine
             return ret;
         }
 
-        public void ClearAnimations()
-        {
+        public void ClearAnimations() {
             animations.Clear();
         }
 
@@ -286,10 +245,8 @@ namespace WeWereBound.Engine
 
         #region Animation Playback
 
-        public void Play(string id, bool restart = false, bool randomizeFrame = false)
-        {
-            if (CurrentAnimationID != id || restart)
-            {
+        public void Play(string id, bool restart = false, bool randomizeFrame = false) {
+            if (CurrentAnimationID != id || restart) {
 #if DEBUG
                 if (!animations.ContainsKey(id))
                     throw new Exception("No Animation defined for ID: " + id);
@@ -301,13 +258,10 @@ namespace WeWereBound.Engine
                 currentAnimation = animations[id];
                 Animating = currentAnimation.Delay > 0;
 
-                if (randomizeFrame)
-                {
+                if (randomizeFrame) {
                     animationTimer = Calc.Random.NextFloat(currentAnimation.Delay);
                     CurrentAnimationFrame = Calc.Random.Next(currentAnimation.Frames.Length);
-                }
-                else
-                {
+                } else {
                     animationTimer = 0;
                     CurrentAnimationFrame = 0;
                 }
@@ -316,10 +270,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public void PlayOffset(string id, float offset, bool restart = false)
-        {
-            if (CurrentAnimationID != id || restart)
-            {
+        public void PlayOffset(string id, float offset, bool restart = false) {
+            if (CurrentAnimationID != id || restart) {
 #if DEBUG
                 if (!animations.ContainsKey(id))
                     throw new Exception("No Animation defined for ID: " + id);
@@ -330,14 +282,12 @@ namespace WeWereBound.Engine
                 LastAnimationID = CurrentAnimationID = id;
                 currentAnimation = animations[id];
 
-                if (currentAnimation.Delay > 0)
-                {
+                if (currentAnimation.Delay > 0) {
                     Animating = true;
                     float at = (currentAnimation.Delay * currentAnimation.Frames.Length) * offset;
 
                     CurrentAnimationFrame = 0;
-                    while (at >= currentAnimation.Delay)
-                    {
+                    while (at >= currentAnimation.Delay) {
                         CurrentAnimationFrame++;
                         at -= currentAnimation.Delay;
                     }
@@ -345,9 +295,7 @@ namespace WeWereBound.Engine
                     CurrentAnimationFrame %= currentAnimation.Frames.Length;
                     animationTimer = at;
                     SetFrame(currentAnimation.Frames[CurrentAnimationFrame]);
-                }
-                else
-                {
+                } else {
                     animationTimer = 0;
                     Animating = false;
                     CurrentAnimationFrame = 0;
@@ -356,38 +304,32 @@ namespace WeWereBound.Engine
             }
         }
 
-        public IEnumerator PlayRoutine(string id, bool restart = false)
-        {
+        public IEnumerator PlayRoutine(string id, bool restart = false) {
             Play(id, restart);
             return PlayUtil();
         }
 
-        public IEnumerator ReverseRoutine(string id, bool restart = false)
-        {
+        public IEnumerator ReverseRoutine(string id, bool restart = false) {
             Reverse(id, restart);
             return PlayUtil();
         }
 
-        private IEnumerator PlayUtil()
-        {
+        private IEnumerator PlayUtil() {
             while (Animating)
                 yield return null;
         }
 
-        public void Reverse(string id, bool restart = false)
-        {
+        public void Reverse(string id, bool restart = false) {
             Play(id, restart);
             if (Rate > 0)
                 Rate *= -1;
         }
 
-        public bool Has(string id)
-        {
+        public bool Has(string id) {
             return id != null && animations.ContainsKey(id);
         }
 
-        public void Stop()
-        {
+        public void Stop() {
             Animating = false;
             currentAnimation = null;
             CurrentAnimationID = "";
@@ -397,30 +339,24 @@ namespace WeWereBound.Engine
 
         #region Properties
 
-        public bool Animating
-        {
+        public bool Animating {
             get; private set;
         }
 
-        public string CurrentAnimationID
-        {
+        public string CurrentAnimationID {
             get; private set;
         }
 
-        public string LastAnimationID
-        {
+        public string LastAnimationID {
             get; private set;
         }
 
-        public int CurrentAnimationFrame
-        {
+        public int CurrentAnimationFrame {
             get; private set;
         }
 
-        public int CurrentAnimationTotalFrames
-        {
-            get
-            {
+        public int CurrentAnimationTotalFrames {
+            get {
                 if (currentAnimation != null)
                     return currentAnimation.Frames.Length;
                 else
@@ -428,18 +364,14 @@ namespace WeWereBound.Engine
             }
         }
 
-        public override float Width
-        {
-            get
-            {
+        public override float Width {
+            get {
                 return width;
             }
         }
 
-        public override float Height
-        {
-            get
-            {
+        public override float Height {
+            get {
                 return height;
             }
         }
@@ -449,18 +381,15 @@ namespace WeWereBound.Engine
         #region Cloning from SpriteBank
 
         internal Sprite()
-            : base(null, true)
-        {
+            : base(null, true) {
 
         }
 
-        internal Sprite CreateClone()
-        {
+        internal Sprite CreateClone() {
             return CloneInto(new Sprite());
         }
 
-        internal Sprite CloneInto(Sprite clone)
-        {
+        internal Sprite CloneInto(Sprite clone) {
             clone.Texture = Texture;
             clone.Position = Position;
             clone.Justify = Justify;
@@ -482,22 +411,18 @@ namespace WeWereBound.Engine
 
         #endregion
 
-        public void DrawSubrect(Vector2 offset, Rectangle rectangle)
-        {
-            if (Texture != null)
-            {
+        public void DrawSubrect(Vector2 offset, Rectangle rectangle) {
+            if (Texture != null) {
                 var clip = Texture.GetRelativeRect(rectangle);
                 var clipOffset = new Vector2(-Math.Min(rectangle.X - Texture.DrawOffset.X, 0), -Math.Min(rectangle.Y - Texture.DrawOffset.Y, 0));
                 Draw.SpriteBatch.Draw(Texture.Texture, RenderPosition + offset, clip, Color, Rotation, Origin - clipOffset, Scale, Effects, 0);
             }
         }
 
-        public void LogAnimations()
-        {
+        public void LogAnimations() {
             StringBuilder str = new StringBuilder();
 
-            foreach (var kv in animations)
-            {
+            foreach (var kv in animations) {
                 var anim = kv.Value;
 
                 str.Append(kv.Key);
@@ -509,8 +434,7 @@ namespace WeWereBound.Engine
             Calc.Log(str.ToString());
         }
 
-        private class Animation
-        {
+        private class Animation {
             public float Delay;
             public MTexture[] Frames;
             public Chooser<string> Goto;

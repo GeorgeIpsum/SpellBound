@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace WeWereBound.Engine
-{
-    public class Shaker : Component
-    {
+namespace WeWereBound.Engine {
+    public class Shaker : Component {
         public Vector2 Value;
         public float Interval = .05f;
         public float Timer;
@@ -14,34 +12,27 @@ namespace WeWereBound.Engine
         private bool on;
 
         public Shaker(bool on = true, Action<Vector2> onShake = null)
-            : base(true, false)
-        {
+            : base(true, false) {
             this.on = on;
             OnShake = onShake;
         }
 
         public Shaker(float time, bool removeOnFinish, Action<Vector2> onShake = null)
-            : this(true, onShake)
-        {
+            : this(true, onShake) {
             Timer = time;
             RemoveOnFinish = removeOnFinish;
         }
 
-        public bool On
-        {
-            get
-            {
+        public bool On {
+            get {
                 return on;
             }
 
-            set
-            {
+            set {
                 on = value;
-                if (!on)
-                {
+                if (!on) {
                     Timer = 0;
-                    if (Value != Vector2.Zero)
-                    {
+                    if (Value != Vector2.Zero) {
                         Value = Vector2.Zero;
                         if (OnShake != null)
                             OnShake(Vector2.Zero);
@@ -50,8 +41,7 @@ namespace WeWereBound.Engine
             }
         }
 
-        public Shaker ShakeFor(float seconds, bool removeOnFinish)
-        {
+        public Shaker ShakeFor(float seconds, bool removeOnFinish) {
             on = true;
             Timer = seconds;
             RemoveOnFinish = removeOnFinish;
@@ -59,13 +49,10 @@ namespace WeWereBound.Engine
             return this;
         }
 
-        public override void Update()
-        {
-            if (on && Timer > 0)
-            {
+        public override void Update() {
+            if (on && Timer > 0) {
                 Timer -= GameEngine.DeltaTime;
-                if (Timer <= 0)
-                {
+                if (Timer <= 0) {
                     on = false;
                     Value = Vector2.Zero;
                     if (OnShake != null)
@@ -76,8 +63,7 @@ namespace WeWereBound.Engine
                 }
             }
 
-            if (on && Scene.OnInterval(Interval))
-            {
+            if (on && Scene.OnInterval(Interval)) {
                 Value = Calc.Random.ShakeVector();
                 if (OnShake != null)
                     OnShake(Value);

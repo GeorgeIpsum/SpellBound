@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace WeWereBound.Engine
-{
-    public class ParticleEmitter : Component
-    {
+namespace WeWereBound.Engine {
+    public class ParticleEmitter : Component {
 
         public ParticleSystem System;
         public ParticleType Type;
@@ -17,8 +15,7 @@ namespace WeWereBound.Engine
 
         private float timer = 0f;
 
-        public ParticleEmitter(ParticleSystem system, ParticleType type, Vector2 position, Vector2 range, int amount, float interval) : base(true, false)
-        {
+        public ParticleEmitter(ParticleSystem system, ParticleType type, Vector2 position, Vector2 range, int amount, float interval) : base(true, false) {
             System = system;
             Type = type;
             Position = position;
@@ -28,30 +25,24 @@ namespace WeWereBound.Engine
         }
 
         public ParticleEmitter(ParticleSystem system, ParticleType type, Vector2 position, Vector2 range, float direction, int amount, float interval)
-            : this(system, type, position, range, amount, interval)
-        {
+            : this(system, type, position, range, amount, interval) {
             Direction = direction;
         }
 
         public ParticleEmitter(ParticleSystem system, ParticleType type, Entity track, Vector2 position, Vector2 range, float direction, int amount, float interval)
-            : this(system, type, position, range, amount, interval)
-        {
+            : this(system, type, position, range, amount, interval) {
             Direction = direction;
             Track = track;
         }
 
-        public void SimulateCycle()
-        {
+        public void SimulateCycle() {
             Simulate(Type.LifeMax);
         }
 
-        public void Simulate(float duration)
-        {
+        public void Simulate(float duration) {
             var steps = duration / Interval;
-            for (var i = 0; i < steps; i++)
-            {
-                for (int j = 0; j < Amount; j++)
-                {
+            for (var i = 0; i < steps; i++) {
+                for (int j = 0; j < Amount; j++) {
                     // create the particle
                     var particle = new Particle();
                     var pos = Entity.Position + Position + Calc.Random.Range(-Range, Range);
@@ -69,19 +60,16 @@ namespace WeWereBound.Engine
             }
         }
 
-        public void Emit()
-        {
+        public void Emit() {
             if (Direction.HasValue)
                 System.Emit(Type, Amount, Entity.Position + Position, Range, Direction.Value);
             else
                 System.Emit(Type, Amount, Entity.Position + Position, Range);
         }
 
-        public override void Update()
-        {
+        public override void Update() {
             timer -= GameEngine.DeltaTime;
-            if (timer <= 0)
-            {
+            if (timer <= 0) {
                 timer = Interval;
                 Emit();
             }

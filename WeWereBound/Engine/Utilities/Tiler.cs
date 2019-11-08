@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Xml;
 
-namespace WeWereBound.Engine
-{
-    public static class Tiler
-    {
+namespace WeWereBound.Engine {
+    public static class Tiler {
         public enum EdgeBehavior { True, False, Wrap };
 
-        public static int[,] Tile(bool[,] bits, Func<int> tileDecider, Action<int> tileOutput, int tileWidth, int tileHeight, EdgeBehavior edges)
-        {
+        public static int[,] Tile(bool[,] bits, Func<int> tileDecider, Action<int> tileOutput, int tileWidth, int tileHeight, EdgeBehavior edges) {
             int boundsX = bits.GetLength(0);
             int boundsY = bits.GetLength(1);
             int[,] tiles = new int[boundsX, boundsY];
 
-            for (TileX = 0; TileX < boundsX; TileX++)
-            {
-                for (TileY = 0; TileY < boundsY; TileY++)
-                {
-                    if (bits[TileX, TileY])
-                    {
-                        switch (edges)
-                        {
+            for (TileX = 0; TileX < boundsX; TileX++) {
+                for (TileY = 0; TileY < boundsY; TileY++) {
+                    if (bits[TileX, TileY]) {
+                        switch (edges) {
                             case EdgeBehavior.True:
                                 Left = TileX == 0 ? true : bits[TileX - 1, TileY];
                                 Right = TileX == boundsX - 1 ? true : bits[TileX + 1, TileY];
@@ -72,20 +65,15 @@ namespace WeWereBound.Engine
             The "mask" will also be used for tile checks! 
             A tile is solid if bits[x, y] OR mask[x, y] is solid
         */
-        public static int[,] Tile(bool[,] bits, bool[,] mask, Func<int> tileDecider, Action<int> tileOutput, int tileWidth, int tileHeight, EdgeBehavior edges)
-        {
+        public static int[,] Tile(bool[,] bits, bool[,] mask, Func<int> tileDecider, Action<int> tileOutput, int tileWidth, int tileHeight, EdgeBehavior edges) {
             int boundsX = bits.GetLength(0);
             int boundsY = bits.GetLength(1);
             int[,] tiles = new int[boundsX, boundsY];
 
-            for (TileX = 0; TileX < boundsX; TileX++)
-            {
-                for (TileY = 0; TileY < boundsY; TileY++)
-                {
-                    if (bits[TileX, TileY])
-                    {
-                        switch (edges)
-                        {
+            for (TileX = 0; TileX < boundsX; TileX++) {
+                for (TileY = 0; TileY < boundsY; TileY++) {
+                    if (bits[TileX, TileY]) {
+                        switch (edges) {
                             case EdgeBehavior.True:
                                 Left = TileX == 0 ? true : bits[TileX - 1, TileY] || mask[TileX - 1, TileY];
                                 Right = TileX == boundsX - 1 ? true : bits[TileX + 1, TileY] || mask[TileX + 1, TileY];
@@ -133,13 +121,11 @@ namespace WeWereBound.Engine
             return tiles;
         }
 
-        public static int[,] Tile(bool[,] bits, AutotileData autotileData, Action<int> tileOutput, int tileWidth, int tileHeight, EdgeBehavior edges)
-        {
+        public static int[,] Tile(bool[,] bits, AutotileData autotileData, Action<int> tileOutput, int tileWidth, int tileHeight, EdgeBehavior edges) {
             return Tile(bits, autotileData.TileHandler, tileOutput, tileWidth, tileHeight, edges);
         }
 
-        public static int[,] Tile(bool[,] bits, bool[,] mask, AutotileData autotileData, Action<int> tileOutput, int tileWidth, int tileHeight, EdgeBehavior edges)
-        {
+        public static int[,] Tile(bool[,] bits, bool[,] mask, AutotileData autotileData, Action<int> tileOutput, int tileWidth, int tileHeight, EdgeBehavior edges) {
             return Tile(bits, mask, autotileData.TileHandler, tileOutput, tileWidth, tileHeight, edges);
         }
 
@@ -155,8 +141,7 @@ namespace WeWereBound.Engine
         public static bool DownRight { get; private set; }
     }
 
-    public class AutotileData
-    {
+    public class AutotileData {
         public int[] Center;
         public int[] Single;
         public int[] SingleHorizontalLeft;
@@ -178,8 +163,7 @@ namespace WeWereBound.Engine
         public int[] InsideBottomLeft;
         public int[] InsideBottomRight;
 
-        public AutotileData(XmlElement xml)
-        {
+        public AutotileData(XmlElement xml) {
             Center = Calc.ReadCSVInt(xml.ChildText("Center", ""));
             Single = Calc.ReadCSVInt(xml.ChildText("Single", ""));
 
@@ -207,13 +191,11 @@ namespace WeWereBound.Engine
             InsideBottomRight = Calc.ReadCSVInt(xml.ChildText("InsideBottomRight", ""));
         }
 
-        public int TileHandler()
-        {
+        public int TileHandler() {
             if (Tiler.Left && Tiler.Right && Tiler.Up && Tiler.Down && Tiler.UpLeft && Tiler.UpRight && Tiler.DownLeft && Tiler.DownRight)
                 return GetTileID(Center);
 
-            else if (!Tiler.Up && !Tiler.Down)
-            {
+            else if (!Tiler.Up && !Tiler.Down) {
                 if (Tiler.Left && Tiler.Right)
                     return GetTileID(SingleHorizontalCenter);
                 else if (!Tiler.Left && !Tiler.Right)
@@ -222,18 +204,14 @@ namespace WeWereBound.Engine
                     return GetTileID(SingleHorizontalRight);
                 else
                     return GetTileID(SingleHorizontalLeft);
-            }
-            else if (!Tiler.Left && !Tiler.Right)
-            {
+            } else if (!Tiler.Left && !Tiler.Right) {
                 if (Tiler.Up && Tiler.Down)
                     return GetTileID(SingleVerticalCenter);
                 else if (Tiler.Down)
                     return GetTileID(SingleVerticalTop);
                 else
                     return GetTileID(SingleVerticalBottom);
-            }
-
-            else if (Tiler.Up && Tiler.Down && Tiler.Left && !Tiler.Right)
+            } else if (Tiler.Up && Tiler.Down && Tiler.Left && !Tiler.Right)
                 return GetTileID(Right);
             else if (Tiler.Up && Tiler.Down && !Tiler.Left && Tiler.Right)
                 return GetTileID(Left);
@@ -262,8 +240,7 @@ namespace WeWereBound.Engine
                 return GetTileID(Top);
         }
 
-        private int GetTileID(int[] choices)
-        {
+        private int GetTileID(int[] choices) {
             if (choices.Length == 0)
                 return -1;
             else if (choices.Length == 1)

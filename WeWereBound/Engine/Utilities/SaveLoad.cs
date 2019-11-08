@@ -2,10 +2,8 @@
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 
-namespace WeWereBound.Engine
-{
-    public static class SaveLoad
-    {
+namespace WeWereBound.Engine {
+    public static class SaveLoad {
         public enum SerializeModes { Binary, XML };
 
         #region Save
@@ -13,18 +11,13 @@ namespace WeWereBound.Engine
         /// <summary>
         /// Save an object to a file so you can load it later
         /// </summary>
-        public static void SerializeToFile<T>(T obj, string filepath, SerializeModes mode)
-        {
-            using (var fileStream = new FileStream(filepath, FileMode.Create))
-            {
+        public static void SerializeToFile<T>(T obj, string filepath, SerializeModes mode) {
+            using (var fileStream = new FileStream(filepath, FileMode.Create)) {
                 //Serialize
-                if (mode == SerializeModes.Binary)
-                {
+                if (mode == SerializeModes.Binary) {
                     var bf = new BinaryFormatter();
                     bf.Serialize(fileStream, obj);
-                }
-                else if (mode == SerializeModes.XML)
-                {
+                } else if (mode == SerializeModes.XML) {
                     var xs = new XmlSerializer(typeof(T));
                     xs.Serialize(fileStream, obj);
                 }
@@ -36,15 +29,11 @@ namespace WeWereBound.Engine
         /// Will not crash if the save fails
         /// </summary>
         /// <returns>Whether the save succeeded</returns>
-        public static bool SafeSerializeToFile<T>(T obj, string filepath, SerializeModes mode)
-        {
-            try
-            {
+        public static bool SafeSerializeToFile<T>(T obj, string filepath, SerializeModes mode) {
+            try {
                 SerializeToFile<T>(obj, filepath, mode);
                 return true;
-            }
-            catch
-            {
+            } catch {
                 return false;
             }
         }
@@ -56,20 +45,15 @@ namespace WeWereBound.Engine
         /// <summary>
         /// Load an object that was previously serialized to a file
         /// </summary>
-        public static T DeserializeFromFile<T>(string filepath, SerializeModes mode)
-        {
+        public static T DeserializeFromFile<T>(string filepath, SerializeModes mode) {
             T data;
-            using (var fileStream = File.OpenRead(filepath))
-            {
+            using (var fileStream = File.OpenRead(filepath)) {
 
                 //Deserialize
-                if (mode == SerializeModes.Binary)
-                {
+                if (mode == SerializeModes.Binary) {
                     var bf = new BinaryFormatter();
                     data = (T)bf.Deserialize(fileStream);
-                }
-                else
-                {
+                } else {
                     var xs = new XmlSerializer(typeof(T));
                     data = (T)xs.Deserialize(fileStream);
                 }
@@ -82,25 +66,18 @@ namespace WeWereBound.Engine
         /// Load an object that was previously serialized to a file
         /// If the load fails or the file does not exist, default(T) will be returned
         /// </summary>
-        public static T SafeDeserializeFromFile<T>(string filepath, SerializeModes mode, bool debugUnsafe = false)
-        {
-            if (File.Exists(filepath))
-            {
+        public static T SafeDeserializeFromFile<T>(string filepath, SerializeModes mode, bool debugUnsafe = false) {
+            if (File.Exists(filepath)) {
                 if (debugUnsafe)
                     return SaveLoad.DeserializeFromFile<T>(filepath, mode);
-                else
-                {
-                    try
-                    {
+                else {
+                    try {
                         return SaveLoad.DeserializeFromFile<T>(filepath, mode);
-                    }
-                    catch
-                    {
+                    } catch {
                         return default(T);
                     }
                 }
-            }
-            else
+            } else
                 return default(T);
         }
 
@@ -109,31 +86,21 @@ namespace WeWereBound.Engine
         /// If the load fails or the file does not exist, default(T) will be returned
         /// </summary>
         /// <param name="loadError">True if the load fails despite the requested file existing (for example due to corrupted data)</param>
-        public static T SafeDeserializeFromFile<T>(string filepath, SerializeModes mode, out bool loadError, bool debugUnsafe = false)
-        {
-            if (File.Exists(filepath))
-            {
-                if (debugUnsafe)
-                {
+        public static T SafeDeserializeFromFile<T>(string filepath, SerializeModes mode, out bool loadError, bool debugUnsafe = false) {
+            if (File.Exists(filepath)) {
+                if (debugUnsafe) {
                     loadError = false;
                     return SaveLoad.DeserializeFromFile<T>(filepath, mode);
-                }
-                else
-                {
-                    try
-                    {
+                } else {
+                    try {
                         loadError = false;
                         return SaveLoad.DeserializeFromFile<T>(filepath, mode);
-                    }
-                    catch
-                    {
+                    } catch {
                         loadError = true;
                         return default(T);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 loadError = false;
                 return default(T);
             }

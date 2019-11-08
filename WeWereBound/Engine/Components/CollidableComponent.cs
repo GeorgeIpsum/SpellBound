@@ -1,46 +1,38 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace WeWereBound.Engine
-{
-    public class CollidableComponent : Component
-    {
+namespace WeWereBound.Engine {
+    public class CollidableComponent : Component {
         public bool Collidable;
 
         private Collider collider;
 
         public CollidableComponent(bool active, bool visible, bool colllidable)
-            : base(active, visible)
-        {
+            : base(active, visible) {
             Collidable = colllidable;
         }
 
-        public override void Added(Entity entity)
-        {
+        public override void Added(Entity entity) {
             base.Added(entity);
             if (collider != null)
                 collider.Entity = entity;
         }
 
-        public override void Removed(Entity entity)
-        {
+        public override void Removed(Entity entity) {
             if (collider != null)
                 collider.Entity = null;
             base.Removed(entity);
         }
 
-        public Collider Collider
-        {
-            get
-            {
+        public Collider Collider {
+            get {
                 if (collider == null)
                     return Entity.Collider;
                 else
                     return collider;
             }
 
-            set
-            {
+            set {
                 if (value == collider)
                     return;
 #if DEBUG
@@ -55,10 +47,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float Width
-        {
-            get
-            {
+        public float Width {
+            get {
                 if (collider == null)
                     return Entity.Width;
                 else
@@ -66,10 +56,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float Height
-        {
-            get
-            {
+        public float Height {
+            get {
                 if (collider == null)
                     return Entity.Height;
                 else
@@ -77,18 +65,15 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float Left
-        {
-            get
-            {
+        public float Left {
+            get {
                 if (collider == null)
                     return Entity.Left;
                 else
                     return Entity.X + collider.Left;
             }
 
-            set
-            {
+            set {
                 if (collider == null)
                     Entity.Left = value;
                 else
@@ -96,18 +81,15 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float Right
-        {
-            get
-            {
+        public float Right {
+            get {
                 if (collider == null)
                     return Entity.Right;
                 else
                     return Entity.X + collider.Right;
             }
 
-            set
-            {
+            set {
                 if (collider == null)
                     Entity.Right = value;
                 else
@@ -115,18 +97,15 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float Top
-        {
-            get
-            {
+        public float Top {
+            get {
                 if (collider == null)
                     return Entity.Top;
                 else
                     return Entity.Y + collider.Top;
             }
 
-            set
-            {
+            set {
                 if (collider == null)
                     Entity.Top = value;
                 else
@@ -134,18 +113,15 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float Bottom
-        {
-            get
-            {
+        public float Bottom {
+            get {
                 if (collider == null)
                     return Entity.Bottom;
                 else
                     return Entity.Y + collider.Bottom;
             }
 
-            set
-            {
+            set {
                 if (collider == null)
                     Entity.Bottom = value;
                 else
@@ -153,18 +129,15 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float CenterX
-        {
-            get
-            {
+        public float CenterX {
+            get {
                 if (collider == null)
                     return Entity.CenterX;
                 else
                     return Entity.X + collider.CenterX;
             }
 
-            set
-            {
+            set {
                 if (collider == null)
                     Entity.CenterX = value;
                 else
@@ -172,18 +145,15 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float CenterY
-        {
-            get
-            {
+        public float CenterY {
+            get {
                 if (collider == null)
                     return Entity.CenterY;
                 else
                     return Entity.Y + collider.CenterY;
             }
 
-            set
-            {
+            set {
                 if (collider == null)
                     Entity.CenterY = value;
                 else
@@ -191,127 +161,100 @@ namespace WeWereBound.Engine
             }
         }
 
-        public Vector2 TopLeft
-        {
-            get
-            {
+        public Vector2 TopLeft {
+            get {
                 return new Vector2(Left, Top);
             }
 
-            set
-            {
+            set {
                 Left = value.X;
                 Top = value.Y;
             }
         }
 
-        public Vector2 TopRight
-        {
-            get
-            {
+        public Vector2 TopRight {
+            get {
                 return new Vector2(Right, Top);
             }
 
-            set
-            {
+            set {
                 Right = value.X;
                 Top = value.Y;
             }
         }
 
-        public Vector2 BottomLeft
-        {
-            get
-            {
+        public Vector2 BottomLeft {
+            get {
                 return new Vector2(Left, Bottom);
             }
 
-            set
-            {
+            set {
                 Left = value.X;
                 Bottom = value.Y;
             }
         }
 
-        public Vector2 BottomRight
-        {
-            get
-            {
+        public Vector2 BottomRight {
+            get {
                 return new Vector2(Right, Bottom);
             }
 
-            set
-            {
+            set {
                 Right = value.X;
                 Bottom = value.Y;
             }
         }
 
-        public Vector2 Center
-        {
-            get
-            {
+        public Vector2 Center {
+            get {
                 return new Vector2(CenterX, CenterY);
             }
 
-            set
-            {
+            set {
                 CenterX = value.X;
                 CenterY = value.Y;
             }
         }
 
-        public Vector2 CenterLeft
-        {
-            get
-            {
+        public Vector2 CenterLeft {
+            get {
                 return new Vector2(Left, CenterY);
             }
 
-            set
-            {
+            set {
                 Left = value.X;
                 CenterY = value.Y;
             }
         }
 
-        public Vector2 CenterRight
-        {
-            get
-            {
+        public Vector2 CenterRight {
+            get {
                 return new Vector2(Right, CenterY);
             }
 
-            set
-            {
+            set {
                 Right = value.X;
                 CenterY = value.Y;
             }
         }
 
-        public Vector2 TopCenter
-        {
-            get
-            {
+        public Vector2 TopCenter {
+            get {
                 return new Vector2(CenterX, Top);
             }
 
-            set
-            {
+            set {
                 CenterX = value.X;
                 Top = value.Y;
             }
         }
 
-        public Vector2 BottomCenter
-        {
-            get
-            {
+        public Vector2 BottomCenter {
+            get {
                 return new Vector2(CenterX, Bottom);
             }
 
-            set
-            {
+            set {
                 CenterX = value.X;
                 Bottom = value.Y;
             }

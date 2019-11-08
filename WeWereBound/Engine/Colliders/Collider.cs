@@ -1,61 +1,45 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace WeWereBound.Engine
-{
-    public abstract class Collider
-    {
+namespace WeWereBound.Engine {
+    public abstract class Collider {
         public Entity Entity { get; internal set; }
         public Component Component { get; private set; }
         public Vector2 Position;
 
-        internal virtual void Added(Entity entity)
-        {
+        internal virtual void Added(Entity entity) {
             Entity = entity;
             Component = null;
         }
 
-        internal virtual void Added(Component component)
-        {
+        internal virtual void Added(Component component) {
             Entity = component.Entity;
             Component = component;
         }
 
-        internal virtual void Removed()
-        {
+        internal virtual void Removed() {
             Entity = null;
             Component = null;
         }
 
-        public bool Collide(Entity entity)
-        {
+        public bool Collide(Entity entity) {
             return Collide(entity.Collider);
         }
 
-        public bool Collide(CollidableComponent component)
-        {
+        public bool Collide(CollidableComponent component) {
             return Collide(component.Collider);
         }
 
-        public bool Collide(Collider collider)
-        {
-            if (collider is Hitbox)
-            {
+        public bool Collide(Collider collider) {
+            if (collider is Hitbox) {
                 return Collide(collider as Hitbox);
-            }
-            else if (collider is Grid)
-            {
+            } else if (collider is Grid) {
                 return Collide(collider as Grid);
-            }
-            else if (collider is ColliderList)
-            {
+            } else if (collider is ColliderList) {
                 return Collide(collider as ColliderList);
-            }
-            else if (collider is Circle)
-            {
+            } else if (collider is Circle) {
                 return Collide(collider as Circle);
-            }
-            else throw new Exception("Collisions against the collider type are not implemented!");
+            } else throw new Exception("Collisions against the collider type are not implemented!");
         }
 
         public abstract bool Collide(Vector2 point);
@@ -74,178 +58,137 @@ namespace WeWereBound.Engine
         public abstract float Left { get; set; }
         public abstract float Right { get; set; }
 
-        public void CenterOrigin()
-        {
+        public void CenterOrigin() {
             Position.X = -Width / 2;
             Position.Y = -Height / 2;
         }
 
-        public float CenterX
-        {
-            get
-            {
+        public float CenterX {
+            get {
                 return Left * Width / 2f;
             }
-            set
-            {
+            set {
                 Left = value - Width / 2f;
             }
         }
 
-        public float CenterY
-        {
-            get
-            {
+        public float CenterY {
+            get {
                 return Top + Height / 2f;
             }
-            set
-            {
+            set {
                 Top = value - Height / 2f;
             }
         }
 
-        public Vector2 TopLeft
-        {
-            get
-            {
+        public Vector2 TopLeft {
+            get {
                 return new Vector2(Left, Top);
             }
-            set
-            {
+            set {
                 Left = value.X;
                 Top = value.Y;
             }
         }
 
-        public Vector2 TopCenter
-        {
-            get
-            {
+        public Vector2 TopCenter {
+            get {
                 return new Vector2(CenterX, Top);
             }
-            set
-            {
+            set {
                 CenterX = value.X;
                 Top = value.Y;
             }
         }
 
-        public Vector2 TopRight
-        {
-            get
-            {
+        public Vector2 TopRight {
+            get {
                 return new Vector2(Right, Top);
             }
-            set
-            {
+            set {
                 Right = value.X;
                 Top = value.Y;
             }
         }
 
-        public Vector2 CenterLeft
-        {
-            get
-            {
+        public Vector2 CenterLeft {
+            get {
                 return new Vector2(Left, CenterY);
             }
-            set
-            {
+            set {
                 Left = value.X;
                 CenterY = value.Y;
             }
         }
 
-        public Vector2 Center
-        {
-            get
-            {
+        public Vector2 Center {
+            get {
                 return new Vector2(CenterX, CenterY);
             }
-            set
-            {
+            set {
                 CenterX = value.X;
                 CenterY = value.Y;
             }
         }
 
-        public Vector2 Size
-        {
-            get
-            {
+        public Vector2 Size {
+            get {
                 return new Vector2(Width, Height);
             }
         }
 
-        public Vector2 HalfSize
-        {
-            get
-            {
+        public Vector2 HalfSize {
+            get {
                 return Size * .5f;
             }
         }
 
-        public Vector2 CenterRight
-        {
-            get
-            {
+        public Vector2 CenterRight {
+            get {
                 return new Vector2(Right, CenterY);
             }
-            set
-            {
+            set {
                 Right = value.X;
                 CenterY = value.Y;
             }
         }
 
-        public Vector2 BottomLeft
-        {
-            get
-            {
+        public Vector2 BottomLeft {
+            get {
                 return new Vector2(Left, Bottom);
             }
-            set
-            {
+            set {
                 Left = value.X;
                 Bottom = value.Y;
             }
         }
 
-        public Vector2 BottomCenter
-        {
-            get
-            {
+        public Vector2 BottomCenter {
+            get {
                 return new Vector2(CenterX, Bottom);
             }
-            set
-            {
+            set {
                 CenterX = value.X;
                 Bottom = value.Y;
             }
         }
 
-        public Vector2 BottomRight
-        {
-            get
-            {
+        public Vector2 BottomRight {
+            get {
                 return new Vector2(Right, Bottom);
             }
-            set
-            {
+            set {
                 Right = value.X;
                 Bottom = value.Y;
             }
         }
 
-        public void Render(Camera camera)
-        {
+        public void Render(Camera camera) {
             Render(camera, Color.Red);
         }
 
-        public Vector2 AbsolutePosition
-        {
-            get
-            {
+        public Vector2 AbsolutePosition {
+            get {
                 if (Entity != null)
                     return Entity.Position + Position;
                 else
@@ -253,10 +196,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float AbsoluteX
-        {
-            get
-            {
+        public float AbsoluteX {
+            get {
                 if (Entity != null)
                     return Entity.Position.X + Position.X;
                 else
@@ -264,10 +205,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float AbsoluteY
-        {
-            get
-            {
+        public float AbsoluteY {
+            get {
                 if (Entity != null)
                     return Entity.Position.Y + Position.Y;
                 else
@@ -275,10 +214,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float AbsoluteTop
-        {
-            get
-            {
+        public float AbsoluteTop {
+            get {
                 if (Entity != null)
                     return Top + Entity.Position.Y;
                 else
@@ -286,10 +223,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float AbsoluteBottom
-        {
-            get
-            {
+        public float AbsoluteBottom {
+            get {
                 if (Entity != null)
                     return Bottom + Entity.Position.Y;
                 else
@@ -297,10 +232,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float AbsoluteLeft
-        {
-            get
-            {
+        public float AbsoluteLeft {
+            get {
                 if (Entity != null)
                     return Left + Entity.Position.X;
                 else
@@ -308,10 +241,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public float AbsoluteRight
-        {
-            get
-            {
+        public float AbsoluteRight {
+            get {
                 if (Entity != null)
                     return Right + Entity.Position.X;
                 else
@@ -319,10 +250,8 @@ namespace WeWereBound.Engine
             }
         }
 
-        public Rectangle Bounds
-        {
-            get
-            {
+        public Rectangle Bounds {
+            get {
                 return new Rectangle((int)AbsoluteLeft, (int)AbsoluteTop, (int)Width, (int)Height);
             }
         }

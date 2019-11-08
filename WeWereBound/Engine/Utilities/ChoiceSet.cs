@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WeWereBound.Engine
-{
-    public class ChoiceSet<T>
-    {
+namespace WeWereBound.Engine {
+    public class ChoiceSet<T> {
         public int TotalWeight { get; private set; }
         private Dictionary<T, int> choices;
 
-        public ChoiceSet()
-        {
+        public ChoiceSet() {
             choices = new Dictionary<T, int>();
             TotalWeight = 0;
         }
@@ -19,19 +16,15 @@ namespace WeWereBound.Engine
         /// </summary>
         /// <param name="choice"></param>
         /// <param name="weight"></param>
-        public void Set(T choice, int weight)
-        {
+        public void Set(T choice, int weight) {
             int oldWeight = 0;
             choices.TryGetValue(choice, out oldWeight);
             TotalWeight -= oldWeight;
 
-            if (weight <= 0)
-            {
+            if (weight <= 0) {
                 if (choices.ContainsKey(choice))
                     choices.Remove(choice);
-            }
-            else
-            {
+            } else {
                 TotalWeight += weight;
                 choices[choice] = weight;
             }
@@ -42,17 +35,14 @@ namespace WeWereBound.Engine
         /// </summary>
         /// <param name="choice"></param>
         /// <returns></returns>
-        public int this[T choice]
-        {
-            get
-            {
+        public int this[T choice] {
+            get {
                 int weight = 0;
                 choices.TryGetValue(choice, out weight);
                 return weight;
             }
 
-            set
-            {
+            set {
                 Set(choice, value);
             }
         }
@@ -63,8 +53,7 @@ namespace WeWereBound.Engine
         /// </summary>
         /// <param name="choice"></param>
         /// <param name="chance">A chance between 0 and 1.0f</param>
-        public void Set(T choice, float chance)
-        {
+        public void Set(T choice, float chance) {
             int oldWeight = 0;
             choices.TryGetValue(choice, out oldWeight);
             TotalWeight -= oldWeight;
@@ -73,13 +62,10 @@ namespace WeWereBound.Engine
             if (weight <= 0 && chance > 0)
                 weight = 1;
 
-            if (weight <= 0)
-            {
+            if (weight <= 0) {
                 if (choices.ContainsKey(choice))
                     choices.Remove(choice);
-            }
-            else
-            {
+            } else {
                 TotalWeight += weight;
                 choices[choice] = weight;
             }
@@ -92,15 +78,12 @@ namespace WeWereBound.Engine
         /// </summary>
         /// <param name="totalChance"></param>
         /// <param name="choices">A chance between 0 and 1.0f</param>
-        public void SetMany(float totalChance, params T[] choices)
-        {
-            if (choices.Length > 0)
-            {
+        public void SetMany(float totalChance, params T[] choices) {
+            if (choices.Length > 0) {
                 float chance = totalChance / choices.Length;
 
                 int oldTotalWeight = 0;
-                foreach (var c in choices)
-                {
+                foreach (var c in choices) {
                     int oldWeight = 0;
                     this.choices.TryGetValue(c, out oldWeight);
                     oldTotalWeight += oldWeight;
@@ -111,14 +94,11 @@ namespace WeWereBound.Engine
                 if (weight <= 0 && totalChance > 0)
                     weight = 1;
 
-                if (weight <= 0)
-                {
+                if (weight <= 0) {
                     foreach (var c in choices)
                         if (this.choices.ContainsKey(c))
                             this.choices.Remove(c);
-                }
-                else
-                {
+                } else {
                     TotalWeight += weight * choices.Length;
                     foreach (var c in choices)
                         this.choices[c] = weight;
@@ -131,12 +111,10 @@ namespace WeWereBound.Engine
         /// </summary>
         /// <param name="random"></param>
         /// <returns></returns>
-        public T Get(Random random)
-        {
+        public T Get(Random random) {
             int at = random.Next(TotalWeight);
 
-            foreach (var kv in choices)
-            {
+            foreach (var kv in choices) {
                 if (at < kv.Value)
                     return kv.Key;
                 else
@@ -150,18 +128,15 @@ namespace WeWereBound.Engine
         /// Chooses a random choice in the set, using Calc.Random to choose
         /// </summary>
         /// <returns></returns>
-        public T Get()
-        {
+        public T Get() {
             return Get(Calc.Random);
         }
 
-        private struct Choice
-        {
+        private struct Choice {
             public T Data;
             public int Weight;
 
-            public Choice(T data, int weight)
-            {
+            public Choice(T data, int weight) {
                 Data = data;
                 Weight = weight;
             }

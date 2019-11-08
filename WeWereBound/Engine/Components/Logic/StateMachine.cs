@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
 
-namespace WeWereBound.Engine
-{
-    public class StateMachine : Component
-    {
+namespace WeWereBound.Engine {
+    public class StateMachine : Component {
         private int state;
         private Action[] begins;
         private Func<int>[] updates;
@@ -18,8 +16,7 @@ namespace WeWereBound.Engine
         public bool Locked;
 
         public StateMachine(int maxStates = 10)
-            : base(true, false)
-        {
+            : base(true, false) {
             PreviousState = state = -1;
 
             begins = new Action[maxStates];
@@ -31,34 +28,29 @@ namespace WeWereBound.Engine
             currentCoroutine.RemoveOnComplete = false;
         }
 
-        public override void Added(Entity entity)
-        {
+        public override void Added(Entity entity) {
             base.Added(entity);
 
             if (Entity.Scene != null && state == -1)
                 State = 0;
         }
 
-        public override void EntityAdded(Scene scene)
-        {
+        public override void EntityAdded(Scene scene) {
             base.EntityAdded(scene);
 
             if (state == -1)
                 State = 0;
         }
 
-        public int State
-        {
+        public int State {
             get { return state; }
-            set
-            {
+            set {
 #if DEBUG
                 if (value >= updates.Length || value < 0)
                     throw new Exception("StateMachine state out of range");
 #endif
 
-                if (!Locked && state != value)
-                {
+                if (!Locked && state != value) {
                     if (Log)
                         Calc.Log("Enter State " + value + " (leaving " + state + ")");
 
@@ -66,38 +58,32 @@ namespace WeWereBound.Engine
                     PreviousState = state;
                     state = value;
 
-                    if (PreviousState != -1 && ends[PreviousState] != null)
-                    {
+                    if (PreviousState != -1 && ends[PreviousState] != null) {
                         if (Log)
                             Calc.Log("Calling End " + PreviousState);
                         ends[PreviousState]();
                     }
 
-                    if (begins[state] != null)
-                    {
+                    if (begins[state] != null) {
                         if (Log)
                             Calc.Log("Calling Begin " + state);
                         begins[state]();
                     }
 
-                    if (coroutines[state] != null)
-                    {
+                    if (coroutines[state] != null) {
                         if (Log)
                             Calc.Log("Starting Coroutine " + state);
                         currentCoroutine.Replace(coroutines[state]());
-                    }
-                    else
+                    } else
                         currentCoroutine.Cancel();
                 }
             }
         }
 
-        public void ForceState(int toState)
-        {
+        public void ForceState(int toState) {
             if (state != toState)
                 State = toState;
-            else
-            {
+            else {
                 if (Log)
                     Calc.Log("Enter State " + toState + " (leaving " + state + ")");
 
@@ -105,74 +91,63 @@ namespace WeWereBound.Engine
                 PreviousState = state;
                 state = toState;
 
-                if (PreviousState != -1 && ends[PreviousState] != null)
-                {
+                if (PreviousState != -1 && ends[PreviousState] != null) {
                     if (Log)
                         Calc.Log("Calling End " + state);
                     ends[PreviousState]();
                 }
 
-                if (begins[state] != null)
-                {
+                if (begins[state] != null) {
                     if (Log)
                         Calc.Log("Calling Begin " + state);
                     begins[state]();
                 }
 
-                if (coroutines[state] != null)
-                {
+                if (coroutines[state] != null) {
                     if (Log)
                         Calc.Log("Starting Coroutine " + state);
                     currentCoroutine.Replace(coroutines[state]());
-                }
-                else
+                } else
                     currentCoroutine.Cancel();
             }
         }
 
-        public void SetCallbacks(int state, Func<int> onUpdate, Func<IEnumerator> coroutine = null, Action begin = null, Action end = null)
-        {
+        public void SetCallbacks(int state, Func<int> onUpdate, Func<IEnumerator> coroutine = null, Action begin = null, Action end = null) {
             updates[state] = onUpdate;
             begins[state] = begin;
             ends[state] = end;
             coroutines[state] = coroutine;
         }
 
-        public void ReflectState(Entity from, int index, string name)
-        {
+        public void ReflectState(Entity from, int index, string name) {
             updates[index] = (Func<int>)Calc.GetMethod<Func<int>>(from, name + "Update");
             begins[index] = (Action)Calc.GetMethod<Action>(from, name + "Begin");
             ends[index] = (Action)Calc.GetMethod<Action>(from, name + "End");
             coroutines[index] = (Func<IEnumerator>)Calc.GetMethod<Func<IEnumerator>>(from, name + "Coroutine");
         }
 
-        public override void Update()
-        {
+        public override void Update() {
             ChangedStates = false;
 
             if (updates[state] != null)
                 State = updates[state]();
-            if (currentCoroutine.Active)
-            {
+            if (currentCoroutine.Active) {
                 currentCoroutine.Update();
                 if (!ChangedStates && Log && currentCoroutine.Finished)
                     Calc.Log("Finished Coroutine " + state);
             }
         }
 
-        public static implicit operator int(StateMachine s)
-        {
+        public static implicit operator int(StateMachine s) {
             return s.state;
         }
 
-        public void LogAllStates()
-        {
+        public void LogAllStates() {
             for (int i = 0; i < updates.Length; i++)
                 LogState(i);
         }
 
-        public void LogState(int index)
-        {
+        public void LogState(int index) {
             Calc.Log("State " + index + ": "
                 + (updates[index] != null ? "U" : "")
                 + (begins[index] != null ? "B" : "")

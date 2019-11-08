@@ -1,23 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WeWereBound.Engine
-{
-    public class CounterSet<T> : Component
-    {
+namespace WeWereBound.Engine {
+    public class CounterSet<T> : Component {
         private Dictionary<T, float> counters;
         private float timer;
 
         public CounterSet()
-            : base(true, false)
-        {
+            : base(true, false) {
             counters = new Dictionary<T, float>();
         }
 
-        public float this[T index]
-        {
-            get
-            {
+        public float this[T index] {
+            get {
                 float value;
                 if (counters.TryGetValue(index, out value))
                     return Math.Max(value - timer, 0);
@@ -25,14 +20,12 @@ namespace WeWereBound.Engine
                     return 0;
             }
 
-            set
-            {
+            set {
                 counters[index] = timer + value;
             }
         }
 
-        public bool Check(T index)
-        {
+        public bool Check(T index) {
             float value;
             if (counters.TryGetValue(index, out value))
                 return value - timer > 0;
@@ -40,8 +33,7 @@ namespace WeWereBound.Engine
                 return false;
         }
 
-        public override void Update()
-        {
+        public override void Update() {
             timer += GameEngine.DeltaTime;
         }
     }

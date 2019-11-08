@@ -5,13 +5,11 @@ using System.IO;
 using System.Reflection;
 using System.Runtime;
 
-namespace WeWereBound.Engine
-{
+namespace WeWereBound.Engine {
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class GameEngine : Game
-    {
+    public class GameEngine : Game {
         public string Title;
         public string Version;
 
@@ -25,8 +23,7 @@ namespace WeWereBound.Engine
         public static int Height { get; private set; }
         public static int ViewWidth { get; private set; }
         public static int ViewHeight { get; private set; }
-        public static int ViewPadding
-        {
+        public static int ViewPadding {
             get { return viewPadding; }
             set { viewPadding = value; Instance.UpdateView(); }
         }
@@ -46,8 +43,7 @@ namespace WeWereBound.Engine
 #endif
 
         //change later to reflect different platforms if needed
-        public static string ContentDirectory
-        {
+        public static string ContentDirectory {
 #if PS4
             get { return Path.Combine("/app0/", Instance.Content.RootDirectory); }
 #elif NSWITCH
@@ -65,15 +61,14 @@ namespace WeWereBound.Engine
         private Scene scene;
         private Scene nextScene;
 
-        public GameEngine(int width, int height, int windowWidth, int windowHeight, string windowTitle, bool fullscreen)
-        {
+        public GameEngine(int width, int height, int windowWidth, int windowHeight, string windowTitle, bool fullscreen) {
             Instance = this;
 
             Title = Window.Title = windowTitle;
             Width = width;
             Height = height;
             ClearColor = Color.Black;
-            
+
             Graphics = new GraphicsDeviceManager(this);
             Graphics.DeviceReset += OnGraphicsReset;
             Graphics.DeviceCreated += OnGraphicsCreate;
@@ -95,14 +90,11 @@ namespace WeWereBound.Engine
             Window.ClientSizeChanged += OnClientSizeChanged;
 #endif
 
-            if (fullscreen)
-            {
+            if (fullscreen) {
                 Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 Graphics.IsFullScreen = true;
-            }
-            else
-            {
+            } else {
                 Graphics.PreferredBackBufferWidth = windowWidth;
                 Graphics.PreferredBackBufferHeight = windowHeight;
                 Graphics.IsFullScreen = false;
@@ -117,10 +109,8 @@ namespace WeWereBound.Engine
         }
 
 #if !CONSOLE
-        protected virtual void OnClientSizeChanged(object sender, EventArgs e)
-        {
-            if(Window.ClientBounds.Width > 0 && Window.ClientBounds.Height > 0 && !resizing)
-            {
+        protected virtual void OnClientSizeChanged(object sender, EventArgs e) {
+            if (Window.ClientBounds.Width > 0 && Window.ClientBounds.Height > 0 && !resizing) {
                 resizing = true;
 
                 Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
@@ -132,31 +122,27 @@ namespace WeWereBound.Engine
         }
 #endif
 
-        protected virtual void OnGraphicsReset(object sender, EventArgs e)
-        {
+        protected virtual void OnGraphicsReset(object sender, EventArgs e) {
             UpdateView();
 
             if (scene != null) scene.HandleGraphicsReset();
             if (nextScene != null && nextScene != scene) nextScene.HandleGraphicsReset();
         }
 
-        protected virtual void OnGraphicsCreate(object sender, EventArgs args)
-        {
+        protected virtual void OnGraphicsCreate(object sender, EventArgs args) {
             UpdateView();
 
             if (scene != null) scene.HandleGraphicsCreate();
             if (nextScene != null && nextScene != scene) nextScene.HandleGraphicsCreate();
         }
 
-        protected override void OnActivated(object sender, EventArgs args)
-        {
+        protected override void OnActivated(object sender, EventArgs args) {
             base.OnActivated(sender, args);
 
             if (scene != null) scene.GainFocus();
         }
 
-        protected override void OnDeactivated(object sender, EventArgs args)
-        {
+        protected override void OnDeactivated(object sender, EventArgs args) {
             base.OnDeactivated(sender, args);
 
             if (scene != null) scene.LoseFocus();
@@ -168,8 +154,7 @@ namespace WeWereBound.Engine
         /// related content.  Calling base.Initialize will enumerate through any components
         /// and initialize them as well.
         /// </summary>
-        protected override void Initialize()
-        {
+        protected override void Initialize() {
             base.Initialize();
 
             MInput.Initialize();
@@ -182,8 +167,7 @@ namespace WeWereBound.Engine
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
-        protected override void LoadContent()
-        {
+        protected override void LoadContent() {
             // Create a new SpriteBatch, which can be used to draw textures.
             base.LoadContent();
 
@@ -195,8 +179,7 @@ namespace WeWereBound.Engine
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
         /// </summary>
-        protected override void UnloadContent()
-        {
+        protected override void UnloadContent() {
             // TODO: Unload any non ContentManager content here
         }
 
@@ -205,31 +188,27 @@ namespace WeWereBound.Engine
         /// checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
-        {
+        protected override void Update(GameTime gameTime) {
             RawDeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             DeltaTime = RawDeltaTime * TimeRate;
 
             MInput.Update();
 
 #if !CONSOLE
-            if(ExitOnEscapeKeypress)
-            {
+            if (ExitOnEscapeKeypress) {
                 Exit();
                 return;
             }
 #endif
 
-            if(OverloadGameLoop != null)
-            {
+            if (OverloadGameLoop != null) {
                 OverloadGameLoop();
                 base.Update(gameTime);
                 return;
             }
 
             if (FreezeTimer > 0) FreezeTimer = Math.Max(FreezeTimer - RawDeltaTime, 0);
-            else if (scene != null)
-            {
+            else if (scene != null) {
                 scene.BeforeUpdate();
                 scene.Update();
                 scene.AfterUpdate();
@@ -238,8 +217,7 @@ namespace WeWereBound.Engine
             if (Commands.Open) Commands.UpdateOpen();
             else if (Commands.Enabled) Commands.UpdateClosed();
 
-            if (scene != nextScene)
-            {
+            if (scene != nextScene) {
                 var lastScene = scene;
                 if (scene != null) scene.End();
 
@@ -255,8 +233,7 @@ namespace WeWereBound.Engine
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
-        {
+        protected override void Draw(GameTime gameTime) {
             RenderCore();
 
             base.Draw(gameTime);
@@ -264,8 +241,7 @@ namespace WeWereBound.Engine
 
             fpsCounter++;
             counterElapsed += gameTime.ElapsedGameTime;
-            if(counterElapsed >= TimeSpan.FromSeconds(1))
-            {
+            if (counterElapsed >= TimeSpan.FromSeconds(1)) {
 #if DEBUG
                 Window.Title = Title + " " + fpsCounter.ToString() + " fps - " + (GC.GetTotalMemory(false) / 1048576f).ToString("F") + " MB";
 #endif
@@ -275,35 +251,28 @@ namespace WeWereBound.Engine
             }
         }
 
-        protected virtual void RenderCore()
-        {
+        protected virtual void RenderCore() {
             if (scene != null) scene.BeforeRender();
 
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Viewport = Viewport;
             GraphicsDevice.Clear(ClearColor);
 
-            if (scene != null)
-            {
+            if (scene != null) {
                 scene.Render();
                 scene.AfterRender();
             }
         }
 
-        protected override void OnExiting(object sender, EventArgs args)
-        {
+        protected override void OnExiting(object sender, EventArgs args) {
             base.OnExiting(sender, args);
             MInput.Shutdown();
         }
 
-        public void RunWithLogging()
-        {
-            try
-            {
+        public void RunWithLogging() {
+            try {
                 Run();
-            }
-            catch(Exception e)
-            {
+            } catch (Exception e) {
                 ErrorLog.Write(e);
                 ErrorLog.Open();
             }
@@ -314,8 +283,7 @@ namespace WeWereBound.Engine
         /// <summary>
         /// Called after a Scene ends, before the next Scene begins
         /// </summary>
-        protected virtual void OnSceneTransition(Scene from, Scene to)
-        {
+        protected virtual void OnSceneTransition(Scene from, Scene to) {
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
@@ -325,8 +293,7 @@ namespace WeWereBound.Engine
         /// <summary>
         /// The currently active Scene. Note that if set, the Scene will not actually change until the end of the Update
         /// </summary>
-        public static Scene Scene
-        {
+        public static Scene Scene {
             get { return Instance.scene; }
             set { Instance.nextScene = value; }
         }
@@ -338,11 +305,9 @@ namespace WeWereBound.Engine
         public static Viewport Viewport { get; private set; }
         public static Matrix ScreenMatrix;
 
-        public static void SetWindowed(int width, int height)
-        {
+        public static void SetWindowed(int width, int height) {
 #if !CONSOLE
-            if(width > 0 && height > 0)
-            {
+            if (width > 0 && height > 0) {
                 resizing = true;
                 Graphics.PreferredBackBufferWidth = width;
                 Graphics.PreferredBackBufferHeight = height;
@@ -355,8 +320,7 @@ namespace WeWereBound.Engine
 #endif
         }
 
-        public static void SetFullscreen()
-        {
+        public static void SetFullscreen() {
 #if !CONSOLE
             resizing = true;
             Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
@@ -369,18 +333,14 @@ namespace WeWereBound.Engine
 #endif
         }
 
-        private void UpdateView()
-        {
+        private void UpdateView() {
             float screenWidth = GraphicsDevice.PresentationParameters.BackBufferWidth;
             float screenHeight = GraphicsDevice.PresentationParameters.BackBufferHeight;
 
-            if(screenWidth / Width > screenHeight / Height)
-            {
+            if (screenWidth / Width > screenHeight / Height) {
                 ViewWidth = (int)(screenHeight / Height * Width);
                 ViewHeight = (int)(screenHeight);
-            }
-            else
-            {
+            } else {
                 ViewWidth = (int)screenWidth;
                 ViewHeight = (int)(screenWidth / Width * Height);
             }
@@ -391,8 +351,7 @@ namespace WeWereBound.Engine
 
             ScreenMatrix = Matrix.CreateScale(ViewWidth / (float)Width);
 
-            Viewport = new Viewport
-            {
+            Viewport = new Viewport {
                 X = (int)(screenWidth / 2 - ViewWidth / 2),
                 Y = (int)(screenHeight / 2 - ViewHeight / 2),
                 Width = ViewWidth,

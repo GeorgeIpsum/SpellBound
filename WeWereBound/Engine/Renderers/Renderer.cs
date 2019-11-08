@@ -1,8 +1,6 @@
 ﻿
-namespace WeWereBound.Engine
-{
-    public abstract class Renderer
-    {
+namespace WeWereBound.Engine {
+    public abstract class Renderer {
         public bool Visible = true;
         public virtual void Update(Scene scene) { }
         public virtual void BeforeRender(Scene scene) { }

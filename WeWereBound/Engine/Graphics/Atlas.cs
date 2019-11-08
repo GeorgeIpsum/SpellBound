@@ -5,16 +5,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
-namespace WeWereBound.Engine
-{
-    public class Atlas
-    {
+namespace WeWereBound.Engine {
+    public class Atlas {
         public List<Texture2D> Sources;
         private Dictionary<string, MTexture> textures = new Dictionary<string, MTexture>(StringComparer.OrdinalIgnoreCase);
         private Dictionary<string, List<MTexture>> orderedTexturesCache = new Dictionary<string, List<MTexture>>();
 
-        public enum AtlasDataFormat
-        {
+        public enum AtlasDataFormat {
             TexturePacker_Sparrow,
             CrunchXml,
             CrunchBinary,
@@ -24,20 +21,16 @@ namespace WeWereBound.Engine
             PackerNoAtlas
         }
 
-        public static Atlas FromAtlas(string path, AtlasDataFormat format)
-        {
+        public static Atlas FromAtlas(string path, AtlasDataFormat format) {
             var atlas = new Atlas();
             atlas.Sources = new List<Texture2D>();
             ReadAtlasData(atlas, path, format);
             return atlas;
         }
 
-        private static void ReadAtlasData(Atlas atlas, string path, AtlasDataFormat format)
-        {
-            switch(format)
-            {
-                case AtlasDataFormat.TexturePacker_Sparrow:
-                    {
+        private static void ReadAtlasData(Atlas atlas, string path, AtlasDataFormat format) {
+            switch (format) {
+                case AtlasDataFormat.TexturePacker_Sparrow: {
                         XmlDocument xml = Calc.LoadContentXML(path);
                         XmlElement at = xml["TextureAtlas"];
 
@@ -51,8 +44,7 @@ namespace WeWereBound.Engine
 
                         var subtextures = at.GetElementsByTagName("SubTexture");
 
-                        foreach (XmlElement sub in subtextures)
-                        {
+                        foreach (XmlElement sub in subtextures) {
                             var name = sub.Attr("name");
                             var clipRect = sub.Rect();
                             if (sub.HasAttr("frameX"))
@@ -62,13 +54,11 @@ namespace WeWereBound.Engine
                         }
                     }
                     break;
-                case AtlasDataFormat.CrunchXml:
-                    {
+                case AtlasDataFormat.CrunchXml: {
                         XmlDocument xml = Calc.LoadContentXML(path);
                         XmlElement at = xml["atlas"];
 
-                        foreach (XmlElement tex in at)
-                        {
+                        foreach (XmlElement tex in at) {
                             var texturePath = tex.Attr("n", "");
                             var fileStream = new FileStream(Path.Combine(Path.GetDirectoryName(path), texturePath + ".png"), FileMode.Open, FileAccess.Read);
                             var texture = Texture2D.FromStream(GameEngine.Instance.GraphicsDevice, fileStream);
@@ -77,8 +67,7 @@ namespace WeWereBound.Engine
                             var mTexture = new MTexture(texture);
                             atlas.Sources.Add(texture);
 
-                            foreach (XmlElement sub in tex)
-                            {
+                            foreach (XmlElement sub in tex) {
                                 var name = sub.Attr("n");
                                 var clipRect = new Rectangle(sub.AttrInt("x"), sub.AttrInt("y"), sub.AttrInt("w"), sub.AttrInt("h"));
                                 if (sub.HasAttr("fx"))
@@ -91,13 +80,11 @@ namespace WeWereBound.Engine
                     break;
 
                 case AtlasDataFormat.CrunchBinary:
-                    using (var stream = File.OpenRead(Path.Combine(GameEngine.ContentDirectory, path)))
-                    {
+                    using (var stream = File.OpenRead(Path.Combine(GameEngine.ContentDirectory, path))) {
                         var reader = new BinaryReader(stream);
                         var textures = reader.ReadInt16();
 
-                        for (int i = 0; i < textures; i++)
-                        {
+                        for (int i = 0; i < textures; i++) {
                             var textureName = reader.ReadNullTerminatedString();
                             var texturePath = Path.Combine(Path.GetDirectoryName(path), textureName + ".png");
                             var fileStream = new FileStream(texturePath, FileMode.Open, FileAccess.Read);
@@ -108,8 +95,7 @@ namespace WeWereBound.Engine
 
                             var mTexture = new MTexture(texture);
                             var subtextures = reader.ReadInt16();
-                            for (int j = 0; j < subtextures; j++)
-                            {
+                            for (int j = 0; j < subtextures; j++) {
                                 var name = reader.ReadNullTerminatedString();
                                 var x = reader.ReadInt16();
                                 var y = reader.ReadInt16();
@@ -127,19 +113,16 @@ namespace WeWereBound.Engine
                     break;
 
                 case AtlasDataFormat.CrunchBinaryNoAtlas:
-                    using (var stream = File.OpenRead(Path.Combine(GameEngine.ContentDirectory, path + ".bin")))
-                    {
+                    using (var stream = File.OpenRead(Path.Combine(GameEngine.ContentDirectory, path + ".bin"))) {
                         var reader = new BinaryReader(stream);
                         var folders = reader.ReadInt16();
 
-                        for (int i = 0; i < folders; i++)
-                        {
+                        for (int i = 0; i < folders; i++) {
                             var folderName = reader.ReadNullTerminatedString();
                             var folderPath = Path.Combine(Path.GetDirectoryName(path), folderName);
 
                             var subtextures = reader.ReadInt16();
-                            for (int j = 0; j < subtextures; j++)
-                            {
+                            for (int j = 0; j < subtextures; j++) {
                                 var name = reader.ReadNullTerminatedString();
                                 var x = reader.ReadInt16();
                                 var y = reader.ReadInt16();
@@ -163,16 +146,14 @@ namespace WeWereBound.Engine
 
                 case AtlasDataFormat.Packer:
 
-                    using (var stream = File.OpenRead(Path.Combine(GameEngine.ContentDirectory, path + ".meta")))
-                    {
+                    using (var stream = File.OpenRead(Path.Combine(GameEngine.ContentDirectory, path + ".meta"))) {
                         var reader = new BinaryReader(stream);
                         reader.ReadInt32(); // version
                         reader.ReadString(); // args
                         reader.ReadInt32(); // hash
 
                         var textures = reader.ReadInt16();
-                        for (int i = 0; i < textures; i++)
-                        {
+                        for (int i = 0; i < textures; i++) {
                             var textureName = reader.ReadString();
                             var texturePath = Path.Combine(Path.GetDirectoryName(path), textureName + ".data");
                             var fileStream = new FileStream(texturePath, FileMode.Open, FileAccess.Read);
@@ -183,8 +164,7 @@ namespace WeWereBound.Engine
 
                             var mTexture = new MTexture(texture);
                             var subtextures = reader.ReadInt16();
-                            for (int j = 0; j < subtextures; j++)
-                            {
+                            for (int j = 0; j < subtextures; j++) {
                                 var name = reader.ReadString().Replace('\\', '/');
                                 var x = reader.ReadInt16();
                                 var y = reader.ReadInt16();
@@ -203,22 +183,19 @@ namespace WeWereBound.Engine
                     break;
 
                 case AtlasDataFormat.PackerNoAtlas:
-                    using (var stream = File.OpenRead(Path.Combine(GameEngine.ContentDirectory, path + ".meta")))
-                    {
+                    using (var stream = File.OpenRead(Path.Combine(GameEngine.ContentDirectory, path + ".meta"))) {
                         var reader = new BinaryReader(stream);
                         reader.ReadInt32(); // version
                         reader.ReadString(); // args
                         reader.ReadInt32(); // hash
 
                         var folders = reader.ReadInt16();
-                        for (int i = 0; i < folders; i++)
-                        {
+                        for (int i = 0; i < folders; i++) {
                             var folderName = reader.ReadString();
                             var folderPath = Path.Combine(Path.GetDirectoryName(path), folderName);
 
                             var subtextures = reader.ReadInt16();
-                            for (int j = 0; j < subtextures; j++)
-                            {
+                            for (int j = 0; j < subtextures; j++) {
                                 var name = reader.ReadString().Replace('\\', '/');
                                 var x = reader.ReadInt16();
                                 var y = reader.ReadInt16();
@@ -255,8 +232,7 @@ namespace WeWereBound.Engine
             }
         }
 
-        public static Atlas FromMultiAtlas(string rootPath, string[] dataPath, AtlasDataFormat format)
-        {
+        public static Atlas FromMultiAtlas(string rootPath, string[] dataPath, AtlasDataFormat format) {
             var atlas = new Atlas();
             atlas.Sources = new List<Texture2D>();
 
@@ -265,14 +241,12 @@ namespace WeWereBound.Engine
             return atlas;
         }
 
-        public static Atlas FromMultiAtlas(string rootPath, string filename, AtlasDataFormat format)
-        {
+        public static Atlas FromMultiAtlas(string rootPath, string filename, AtlasDataFormat format) {
             var atlas = new Atlas();
             atlas.Sources = new List<Texture2D>();
 
             var index = 0;
-            while(true)
-            {
+            while (true) {
                 var dataPath = Path.Combine(rootPath, $"{filename}{index.ToString()}.xml");
 
                 if (!File.Exists(Path.Combine(GameEngine.ContentDirectory, dataPath))) break;
@@ -284,8 +258,7 @@ namespace WeWereBound.Engine
             return atlas;
         }
 
-        public static Atlas FromDirectory(string path)
-        {
+        public static Atlas FromDirectory(string path) {
             var atlas = new Atlas();
             atlas.Sources = new List<Texture2D>();
 
@@ -294,8 +267,7 @@ namespace WeWereBound.Engine
             var contentPath = Path.Combine(contentDirectory, path);
             var contentPathLength = contentPath.Length;
 
-            foreach (var file in Directory.GetFiles(contentPath, "*", SearchOption.AllDirectories))
-            {
+            foreach (var file in Directory.GetFiles(contentPath, "*", SearchOption.AllDirectories)) {
                 var ext = Path.GetExtension(file);
                 if (ext != ".png" && ext != ".xnb") continue;
 
@@ -315,34 +287,28 @@ namespace WeWereBound.Engine
             return atlas;
         }
 
-        public MTexture this[string id]
-        {
+        public MTexture this[string id] {
             get { return textures[id]; }
             set { textures[id] = value; }
         }
 
-        public bool Has(string id)
-        {
+        public bool Has(string id) {
             return textures.ContainsKey(id);
         }
 
-        public MTexture GetOrDefault(string id, MTexture defaultTexture)
-        {
+        public MTexture GetOrDefault(string id, MTexture defaultTexture) {
             if (String.IsNullOrEmpty(id) || !Has(id)) return defaultTexture;
             else return textures[id];
         }
 
-        public List<MTexture> GetAtlasSubtextures(string key)
-        {
+        public List<MTexture> GetAtlasSubtextures(string key) {
             List<MTexture> list;
 
-            if (!orderedTexturesCache.TryGetValue(key, out list))
-            {
+            if (!orderedTexturesCache.TryGetValue(key, out list)) {
                 list = new List<MTexture>();
 
                 var index = 0;
-                while (true)
-                {
+                while (true) {
                     var texture = GetAtlasSubtextureFromAtlasAt(key, index);
                     if (texture != null) list.Add(texture);
                     else break;
@@ -356,19 +322,16 @@ namespace WeWereBound.Engine
             return list;
         }
 
-        private MTexture GetAtlasSubtextureFromCacheAt(string key, int index)
-        {
+        private MTexture GetAtlasSubtextureFromCacheAt(string key, int index) {
             return orderedTexturesCache[key][index];
         }
 
-        private MTexture GetAtlasSubtextureFromAtlasAt(string key, int index)
-        {
+        private MTexture GetAtlasSubtextureFromAtlasAt(string key, int index) {
             if (index == 0 && textures.ContainsKey(key)) return textures[key];
 
             var indexString = index.ToString();
             var startLength = indexString.Length;
-            while (indexString.Length < startLength + 6)
-            {
+            while (indexString.Length < startLength + 6) {
                 MTexture result;
                 if (textures.TryGetValue(key + indexString, out result)) return result;
 
@@ -378,15 +341,13 @@ namespace WeWereBound.Engine
             return null;
         }
 
-        public MTexture GetAtlasSubtexturesAt(string key, int index)
-        {
+        public MTexture GetAtlasSubtexturesAt(string key, int index) {
             List<MTexture> list;
             if (orderedTexturesCache.TryGetValue(key, out list)) return list[index];
             else return GetAtlasSubtextureFromAtlasAt(key, index);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             foreach (var texture in Sources) texture.Dispose();
 
             Sources.Clear();

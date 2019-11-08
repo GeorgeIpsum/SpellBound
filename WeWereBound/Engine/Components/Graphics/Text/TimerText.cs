@@ -2,10 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace WeWereBound.Engine
-{
-    public class TimerText : GraphicsComponent
-    {
+namespace WeWereBound.Engine {
+    public class TimerText : GraphicsComponent {
         private const float DELTA_TIME = 1 / 60f;
 
         public enum CountModes { Down, Up };
@@ -21,8 +19,7 @@ namespace WeWereBound.Engine
         public CountModes CountMode;
 
         public TimerText(SpriteFont font, TimerModes mode, CountModes countMode, int frames, Vector2 justify, Action onComplete = null)
-            : base(true)
-        {
+            : base(true) {
             this.font = font;
             this.timerMode = mode;
             this.CountMode = countMode;
@@ -40,10 +37,8 @@ namespace WeWereBound.Engine
             CalculateOrigin();
         }
 
-        private void UpdateText()
-        {
-            switch (timerMode)
-            {
+        private void UpdateText() {
+            switch (timerMode) {
                 case TimerModes.SecondsMilliseconds:
                     float seconds = (frames / 60) + (frames % 60) * DELTA_TIME;
                     Text = seconds.ToString("0.00");
@@ -51,19 +46,15 @@ namespace WeWereBound.Engine
             }
         }
 
-        private void CalculateOrigin()
-        {
+        private void CalculateOrigin() {
             Origin = (font.MeasureString(Text) * justify).Floor();
         }
 
-        public override void Update()
-        {
+        public override void Update() {
             base.Update();
 
-            if (CountMode == CountModes.Down)
-            {
-                if (frames > 0)
-                {
+            if (CountMode == CountModes.Down) {
+                if (frames > 0) {
                     frames--;
                     if (frames == 0 && OnComplete != null)
                         OnComplete();
@@ -71,41 +62,33 @@ namespace WeWereBound.Engine
                     UpdateText();
                     CalculateOrigin();
                 }
-            }
-            else
-            {
+            } else {
                 frames++;
                 UpdateText();
                 CalculateOrigin();
             }
         }
 
-        public override void Render()
-        {
+        public override void Render() {
             Draw.SpriteBatch.DrawString(font, Text, RenderPosition, Color, Rotation, Origin, Scale, Effects, 0);
         }
 
-        public SpriteFont Font
-        {
+        public SpriteFont Font {
             get { return font; }
-            set
-            {
+            set {
                 font = value;
                 CalculateOrigin();
             }
         }
 
-        public int Frames
-        {
+        public int Frames {
             get { return frames; }
-            set
-            {
+            set {
 #if DEBUG
                 if (value < 0)
                     throw new Exception("Frames must be larger than or equal to zero!");
 #endif
-                if (frames != value)
-                {
+                if (frames != value) {
                     frames = value;
                     UpdateText();
                     CalculateOrigin();
@@ -113,23 +96,19 @@ namespace WeWereBound.Engine
             }
         }
 
-        public Vector2 Justify
-        {
+        public Vector2 Justify {
             get { return justify; }
-            set
-            {
+            set {
                 justify = value;
                 CalculateOrigin();
             }
         }
 
-        public float Width
-        {
+        public float Width {
             get { return font.MeasureString(Text).X; }
         }
 
-        public float Height
-        {
+        public float Height {
             get { return font.MeasureString(Text).Y; }
         }
     }

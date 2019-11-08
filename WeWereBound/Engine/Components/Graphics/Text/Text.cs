@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace WeWereBound.Engine
-{
-    public class Text : GraphicsComponent
-    {
+namespace WeWereBound.Engine {
+    public class Text : GraphicsComponent {
         public enum HorizontalAlign { Left, Center, Right };
         public enum VerticalAlign { Top, Center, Bottom };
 
@@ -15,8 +13,7 @@ namespace WeWereBound.Engine
         private Vector2 size;
 
         public Text(SpriteFont font, string text, Vector2 position, Color color, HorizontalAlign horizontalAlign = HorizontalAlign.Center, VerticalAlign verticalAlign = VerticalAlign.Center)
-            : base(false)
-        {
+            : base(false) {
             this.font = font;
             this.text = text;
             Position = position;
@@ -27,69 +24,56 @@ namespace WeWereBound.Engine
         }
 
         public Text(SpriteFont font, string text, Vector2 position, HorizontalAlign horizontalAlign = HorizontalAlign.Center, VerticalAlign verticalAlign = VerticalAlign.Center)
-            : this(font, text, position, Color.White, horizontalAlign, verticalAlign)
-        {
+            : this(font, text, position, Color.White, horizontalAlign, verticalAlign) {
 
         }
 
-        public SpriteFont Font
-        {
+        public SpriteFont Font {
             get { return font; }
-            set
-            {
+            set {
                 font = value;
                 UpdateSize();
             }
         }
 
-        public string DrawText
-        {
+        public string DrawText {
             get { return text; }
-            set
-            {
+            set {
                 text = value;
                 UpdateSize();
             }
         }
 
-        public HorizontalAlign HorizontalOrigin
-        {
+        public HorizontalAlign HorizontalOrigin {
             get { return horizontalOrigin; }
-            set
-            {
+            set {
                 horizontalOrigin = value;
                 UpdateCentering();
             }
         }
 
-        public VerticalAlign VerticalOrigin
-        {
+        public VerticalAlign VerticalOrigin {
             get { return verticalOrigin; }
-            set
-            {
+            set {
                 verticalOrigin = value;
                 UpdateCentering();
             }
         }
 
-        public float Width
-        {
+        public float Width {
             get { return size.X; }
         }
 
-        public float Height
-        {
+        public float Height {
             get { return size.Y; }
         }
 
-        private void UpdateSize()
-        {
+        private void UpdateSize() {
             size = font.MeasureString(text);
             UpdateCentering();
         }
 
-        private void UpdateCentering()
-        {
+        private void UpdateCentering() {
             if (horizontalOrigin == HorizontalAlign.Left)
                 Origin.X = 0;
             else if (horizontalOrigin == HorizontalAlign.Center)
@@ -107,8 +91,7 @@ namespace WeWereBound.Engine
             Origin = Origin.Floor();
         }
 
-        public override void Render()
-        {
+        public override void Render() {
             Draw.SpriteBatch.DrawString(font, text, RenderPosition, Color, Rotation, Origin, Scale, Effects, 0);
         }
     }

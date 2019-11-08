@@ -2,10 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace WeWereBound.Engine
-{
-    public class Camera
-    {
+namespace WeWereBound.Engine {
+    public class Camera {
         private Matrix matrix = Matrix.Identity;
         private Matrix inverse = Matrix.Identity;
         private bool changed;
@@ -17,24 +15,21 @@ namespace WeWereBound.Engine
 
         public Viewport Viewport;
 
-        public Camera()
-        {
+        public Camera() {
             Viewport = new Viewport();
             Viewport.Width = GameEngine.Width;
             Viewport.Height = GameEngine.Height;
             UpdateMatrices();
         }
 
-        public Camera(int width, int height)
-        {
+        public Camera(int width, int height) {
             Viewport = new Viewport();
             Viewport.Width = width;
             Viewport.Height = height;
             UpdateMatrices();
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return "Camera:\n\tViewport: { " + Viewport.X + ", " + Viewport.Y + ", " + Viewport.Width + ", " + Viewport.Height +
                 " }\n\tPosition: { " + position.X + ", " + position.Y +
                 " }\n\tOrigin: { " + origin.X + ", " + origin.Y +
@@ -42,8 +37,7 @@ namespace WeWereBound.Engine
                 " }\n\tAngle: " + angle;
         }
 
-        private void UpdateMatrices()
-        {
+        private void UpdateMatrices() {
             matrix = Matrix.Identity *
                 Matrix.CreateTranslation(new Vector3(-new Vector2((int)Math.Floor(position.X), (int)Math.Floor(position.Y)), 0)) *
                 Matrix.CreateRotationZ(angle) *
@@ -55,8 +49,7 @@ namespace WeWereBound.Engine
             changed = false;
         }
 
-        public void CopyFrom(Camera other)
-        {
+        public void CopyFrom(Camera other) {
             position = other.position;
             origin = other.origin;
             angle = other.angle;
@@ -64,169 +57,135 @@ namespace WeWereBound.Engine
             changed = true;
         }
 
-        public Matrix Matrix
-        {
-            get
-            {
+        public Matrix Matrix {
+            get {
                 if (changed) UpdateMatrices();
                 return inverse;
             }
         }
 
-        public Matrix Inverse
-        {
-            get
-            {
+        public Matrix Inverse {
+            get {
                 if (changed) UpdateMatrices();
                 return inverse;
             }
         }
 
-        public Vector2 Position
-        {
+        public Vector2 Position {
             get { return position; }
-            set
-            {
+            set {
                 changed = true;
                 position = value;
             }
         }
 
-        public Vector2 Origin
-        {
+        public Vector2 Origin {
             get { return origin; }
-            set
-            {
+            set {
                 changed = true;
                 origin = value;
             }
         }
 
-        public float X
-        {
+        public float X {
             get { return position.X; }
-            set
-            {
+            set {
                 changed = true;
                 position.X = value;
             }
         }
 
-        public float Y
-        {
+        public float Y {
             get { return position.Y; }
-            set
-            {
+            set {
                 changed = true;
                 position.Y = value;
             }
         }
 
-        public float Zoom
-        {
+        public float Zoom {
             get { return zoom.X; }
-            set
-            {
+            set {
                 changed = true;
                 zoom.X = zoom.Y = value;
             }
         }
 
-        public float Angle
-        {
+        public float Angle {
             get { return angle; }
-            set
-            {
+            set {
                 changed = true;
                 angle = value;
             }
         }
 
-        public float Left
-        {
-            get
-            {
+        public float Left {
+            get {
                 if (changed) UpdateMatrices();
                 return Vector2.Transform(Vector2.Zero, Inverse).X;
             }
 
-            set
-            {
+            set {
                 if (changed) UpdateMatrices();
                 X = Vector2.Transform(Vector2.UnitX * value, Matrix).X;
             }
         }
 
-        public float Right
-        {
-            get
-            {
+        public float Right {
+            get {
                 if (changed) UpdateMatrices();
                 return Vector2.Transform(Vector2.UnitX * Viewport.Width, Inverse).X;
             }
-            set
-            {
+            set {
                 throw new NotImplementedException();
             }
         }
 
-        public float Top
-        {
-            get
-            {
+        public float Top {
+            get {
                 if (changed) UpdateMatrices();
                 return Vector2.Transform(Vector2.Zero, Inverse).Y;
             }
-            set
-            {
+            set {
                 if (changed) UpdateMatrices();
                 Y = Vector2.Transform(Vector2.UnitY * value, Matrix).Y;
             }
         }
 
-        public float Bottom
-        {
-            get
-            {
+        public float Bottom {
+            get {
                 if (changed) UpdateMatrices();
                 return Vector2.Transform(Vector2.UnitY * Viewport.Height, Inverse).Y;
             }
-            set
-            {
+            set {
                 throw new NotImplementedException();
             }
         }
 
-        public void CenterOrigin()
-        {
+        public void CenterOrigin() {
             origin = new Vector2((float)Viewport.Width / 2, (float)Viewport.Height / 2);
             changed = true;
         }
 
-        public void RoundPosition()
-        {
+        public void RoundPosition() {
             position.X = (float)Math.Round(position.X);
             position.Y = (float)Math.Round(position.Y);
             changed = true;
         }
 
-        public Vector2 ScreenToCamera(Vector2 position)
-        {
+        public Vector2 ScreenToCamera(Vector2 position) {
             return Vector2.Transform(position, Inverse);
         }
 
-        public Vector2 CameraToScreen(Vector2 position)
-        {
+        public Vector2 CameraToScreen(Vector2 position) {
             return Vector2.Transform(position, Matrix);
         }
 
-        public void Approach(Vector2 position, float ease)
-        {
+        public void Approach(Vector2 position, float ease) {
             Position += (position - Position) * ease;
         }
 
-        public void Approach(Vector2 position, float ease, float maxDistance)
-        {
+        public void Approach(Vector2 position, float ease, float maxDistance) {
             Vector2 move = (position - Position) * ease;
             if (move.Length() > maxDistance) Position += Vector2.Normalize(move) * maxDistance;
             else Position += move;

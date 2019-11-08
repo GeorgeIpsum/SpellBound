@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace WeWereBound.Engine
-{
-    public class Commands
-    {
+namespace WeWereBound.Engine {
+    public class Commands {
         private const float UNDERSCORE_TIME = .5f;
         private const float REPEAT_DELAY = .5f;
         private const float REPEAT_EVERY = 1 / 30f;
@@ -35,8 +33,7 @@ namespace WeWereBound.Engine
         private Keys? repeatKey = null;
         private bool canOpen;
 
-        public Commands()
-        {
+        public Commands() {
             commandHistory = new List<string>();
             drawCommands = new List<Line>();
             commands = new Dictionary<string, CommandInfo>();
@@ -46,13 +43,11 @@ namespace WeWereBound.Engine
             BuildCommandsList();
         }
 
-        public void Log(object obj, Color color)
-        {
+        public void Log(object obj, Color color) {
             string str = obj.ToString();
 
             //Newline splits
-            if (str.Contains("\n"))
-            {
+            if (str.Contains("\n")) {
                 var all = str.Split('\n');
                 foreach (var line in all)
                     Log(line, color);
@@ -61,13 +56,10 @@ namespace WeWereBound.Engine
 
             //Split the string if you overlow horizontally
             int maxWidth = GameEngine.Instance.Window.ClientBounds.Width - 40;
-            while (Draw.DefaultFont.MeasureString(str).X > maxWidth)
-            {
+            while (Draw.DefaultFont.MeasureString(str).X > maxWidth) {
                 int split = -1;
-                for (int i = 0; i < str.Length; i++)
-                {
-                    if (str[i] == ' ')
-                    {
+                for (int i = 0; i < str.Length; i++) {
+                    if (str[i] == ' ') {
                         if (Draw.DefaultFont.MeasureString(str.Substring(0, i)).X <= maxWidth)
                             split = i;
                         else
@@ -90,19 +82,16 @@ namespace WeWereBound.Engine
                 drawCommands.RemoveAt(drawCommands.Count - 1);
         }
 
-        public void Log(object obj)
-        {
+        public void Log(object obj) {
             Log(obj, Color.White);
         }
 
         #region Updating and Rendering
 
-        internal void UpdateClosed()
-        {
+        internal void UpdateClosed() {
             if (!canOpen)
                 canOpen = true;
-            else if (MInput.Keyboard.Pressed(Keys.OemTilde, Keys.Oem8))
-            {
+            else if (MInput.Keyboard.Pressed(Keys.OemTilde, Keys.Oem8)) {
                 Open = true;
                 currentState = Keyboard.GetState();
             }
@@ -112,60 +101,48 @@ namespace WeWereBound.Engine
                     ExecuteFunctionKeyAction(i);
         }
 
-        internal void UpdateOpen()
-        {
+        internal void UpdateOpen() {
             oldState = currentState;
             currentState = Keyboard.GetState();
 
             underscoreCounter += GameEngine.DeltaTime;
-            while (underscoreCounter >= UNDERSCORE_TIME)
-            {
+            while (underscoreCounter >= UNDERSCORE_TIME) {
                 underscoreCounter -= UNDERSCORE_TIME;
                 underscore = !underscore;
             }
 
-            if (repeatKey.HasValue)
-            {
-                if (currentState[repeatKey.Value] == KeyState.Down)
-                {
+            if (repeatKey.HasValue) {
+                if (currentState[repeatKey.Value] == KeyState.Down) {
                     repeatCounter += GameEngine.DeltaTime;
 
-                    while (repeatCounter >= REPEAT_DELAY)
-                    {
+                    while (repeatCounter >= REPEAT_DELAY) {
                         HandleKey(repeatKey.Value);
                         repeatCounter -= REPEAT_EVERY;
                     }
-                }
-                else
+                } else
                     repeatKey = null;
             }
 
-            foreach (Keys key in currentState.GetPressedKeys())
-            {
-                if (oldState[key] == KeyState.Up)
-                {
+            foreach (Keys key in currentState.GetPressedKeys()) {
+                if (oldState[key] == KeyState.Up) {
                     HandleKey(key);
                     break;
                 }
             }
         }
 
-        private void HandleKey(Keys key)
-        {
+        private void HandleKey(Keys key) {
             if (key != Keys.Tab && key != Keys.LeftShift && key != Keys.RightShift && key != Keys.RightAlt && key != Keys.LeftAlt && key != Keys.RightControl && key != Keys.LeftControl)
                 tabIndex = -1;
 
-            if (key != Keys.OemTilde && key != Keys.Oem8 && key != Keys.Enter && repeatKey != key)
-            {
+            if (key != Keys.OemTilde && key != Keys.Oem8 && key != Keys.Enter && repeatKey != key) {
                 repeatKey = key;
                 repeatCounter = 0;
             }
 
-            switch (key)
-            {
+            switch (key) {
                 default:
-                    if (key.ToString().Length == 1)
-                    {
+                    if (key.ToString().Length == 1) {
                         if (currentState[Keys.LeftShift] == KeyState.Down || currentState[Keys.RightShift] == KeyState.Down)
                             currentText += key.ToString();
                         else
@@ -306,15 +283,13 @@ namespace WeWereBound.Engine
                     break;
 
                 case Keys.Up:
-                    if (seekIndex < commandHistory.Count - 1)
-                    {
+                    if (seekIndex < commandHistory.Count - 1) {
                         seekIndex++;
                         currentText = string.Join(" ", commandHistory[seekIndex]);
                     }
                     break;
                 case Keys.Down:
-                    if (seekIndex > -1)
-                    {
+                    if (seekIndex > -1) {
                         seekIndex--;
                         if (seekIndex == -1)
                             currentText = "";
@@ -324,29 +299,20 @@ namespace WeWereBound.Engine
                     break;
 
                 case Keys.Tab:
-                    if (currentState[Keys.LeftShift] == KeyState.Down || currentState[Keys.RightShift] == KeyState.Down)
-                    {
-                        if (tabIndex == -1)
-                        {
+                    if (currentState[Keys.LeftShift] == KeyState.Down || currentState[Keys.RightShift] == KeyState.Down) {
+                        if (tabIndex == -1) {
                             tabSearch = currentText;
                             FindLastTab();
-                        }
-                        else
-                        {
+                        } else {
                             tabIndex--;
                             if (tabIndex < 0 || (tabSearch != "" && sorted[tabIndex].IndexOf(tabSearch) != 0))
                                 FindLastTab();
                         }
-                    }
-                    else
-                    {
-                        if (tabIndex == -1)
-                        {
+                    } else {
+                        if (tabIndex == -1) {
                             tabSearch = currentText;
                             FindFirstTab();
-                        }
-                        else
-                        {
+                        } else {
                             tabIndex++;
                             if (tabIndex >= sorted.Count || (tabSearch != "" && sorted[tabIndex].IndexOf(tabSearch) != 0))
                                 FindFirstTab();
@@ -383,8 +349,7 @@ namespace WeWereBound.Engine
             }
         }
 
-        private void EnterCommand()
-        {
+        private void EnterCommand() {
             string[] data = currentText.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
             if (commandHistory.Count == 0 || commandHistory[0] != currentText)
                 commandHistory.Insert(0, currentText);
@@ -398,27 +363,22 @@ namespace WeWereBound.Engine
             ExecuteCommand(data[0].ToLower(), args);
         }
 
-        private void FindFirstTab()
-        {
-            for (int i = 0; i < sorted.Count; i++)
-            {
-                if (tabSearch == "" || sorted[i].IndexOf(tabSearch) == 0)
-                {
+        private void FindFirstTab() {
+            for (int i = 0; i < sorted.Count; i++) {
+                if (tabSearch == "" || sorted[i].IndexOf(tabSearch) == 0) {
                     tabIndex = i;
                     break;
                 }
             }
         }
 
-        private void FindLastTab()
-        {
+        private void FindLastTab() {
             for (int i = 0; i < sorted.Count; i++)
                 if (tabSearch == "" || sorted[i].IndexOf(tabSearch) == 0)
                     tabIndex = i;
         }
 
-        internal void Render()
-        {
+        internal void Render() {
             int screenWidth = GameEngine.ViewWidth;
             int screenHeight = GameEngine.ViewHeight;
 
@@ -430,8 +390,7 @@ namespace WeWereBound.Engine
             else
                 Draw.SpriteBatch.DrawString(Draw.DefaultFont, ">" + currentText, new Vector2(20, screenHeight - 42), Color.White);
 
-            if (drawCommands.Count > 0)
-            {
+            if (drawCommands.Count > 0) {
                 int height = 10 + (30 * drawCommands.Count);
                 Draw.Rect(10, screenHeight - height - 60, screenWidth - 20, height, Color.Black * OPACITY);
                 for (int i = 0; i < drawCommands.Count; i++)
@@ -445,16 +404,14 @@ namespace WeWereBound.Engine
 
         #region Execute
 
-        public void ExecuteCommand(string command, string[] args)
-        {
+        public void ExecuteCommand(string command, string[] args) {
             if (commands.ContainsKey(command))
                 commands[command].Action(args);
             else
                 Log("Command '" + command + "' not found! Type 'help' for list of commands", Color.Yellow);
         }
 
-        public void ExecuteFunctionKeyAction(int num)
-        {
+        public void ExecuteFunctionKeyAction(int num) {
             if (FunctionKeyActions[num] != null)
                 FunctionKeyActions[num]();
         }
@@ -463,8 +420,7 @@ namespace WeWereBound.Engine
 
         #region Parse Commands
 
-        private void BuildCommandsList()
-        {
+        private void BuildCommandsList() {
 #if !CONSOLE
             //Check Monocle for Commands
             foreach (var type in Assembly.GetCallingAssembly().GetTypes())
@@ -483,8 +439,7 @@ namespace WeWereBound.Engine
 #endif
         }
 
-        private void ProcessMethod(MethodInfo method)
-        {
+        private void ProcessMethod(MethodInfo method) {
             Command attr = null;
             {
                 var attrs = method.GetCustomAttributes(typeof(Command), false);
@@ -492,12 +447,10 @@ namespace WeWereBound.Engine
                     attr = attrs[0] as Command;
             }
 
-            if (attr != null)
-            {
+            if (attr != null) {
                 if (!method.IsStatic)
                     throw new Exception(method.DeclaringType.Name + "." + method.Name + " is marked as a command, but is not static");
-                else
-                {
+                else {
                     CommandInfo info = new CommandInfo();
                     info.Help = attr.Help;
 
@@ -505,8 +458,7 @@ namespace WeWereBound.Engine
                     var defaults = new object[parameters.Length];
                     string[] usage = new string[parameters.Length];
 
-                    for (int i = 0; i < parameters.Length; i++)
-                    {
+                    for (int i = 0; i < parameters.Length; i++) {
                         var p = parameters[i];
                         usage[i] = p.Name + ":";
 
@@ -523,15 +475,13 @@ namespace WeWereBound.Engine
 
                         if (p.DefaultValue == DBNull.Value)
                             defaults[i] = null;
-                        else if (p.DefaultValue != null)
-                        {
+                        else if (p.DefaultValue != null) {
                             defaults[i] = p.DefaultValue;
                             if (p.ParameterType == typeof(string))
                                 usage[i] += "=\"" + p.DefaultValue + "\"";
                             else
                                 usage[i] += "=" + p.DefaultValue;
-                        }
-                        else
+                        } else
                             defaults[i] = null;
                     }
 
@@ -540,16 +490,13 @@ namespace WeWereBound.Engine
                     else
                         info.Usage = "[" + string.Join(" ", usage) + "]";
 
-                    info.Action = (args) =>
-                    {
+                    info.Action = (args) => {
                         if (parameters.Length == 0)
                             InvokeMethod(method);
-                        else
-                        {
+                        else {
                             object[] param = (object[])defaults.Clone();
 
-                            for (int i = 0; i < param.Length && i < args.Length; i++)
-                            {
+                            for (int i = 0; i < param.Length && i < args.Length; i++) {
                                 if (parameters[i].ParameterType == typeof(string))
                                     param[i] = ArgString(args[i]);
                                 else if (parameters[i].ParameterType == typeof(int))
@@ -569,23 +516,17 @@ namespace WeWereBound.Engine
             }
         }
 
-        private void InvokeMethod(MethodInfo method, object[] param = null)
-        {
-            try
-            {
+        private void InvokeMethod(MethodInfo method, object[] param = null) {
+            try {
                 method.Invoke(null, param);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 GameEngine.Commands.Log(e.InnerException.Message, Color.Yellow);
                 LogStackTrace(e.InnerException.StackTrace);
             }
         }
 
-        private void LogStackTrace(string stackTrace)
-        {
-            foreach (var call in stackTrace.Split('\n'))
-            {
+        private void LogStackTrace(string stackTrace) {
+            foreach (var call in stackTrace.Split('\n')) {
                 string log = call;
 
                 //Remove File Path
@@ -616,8 +557,7 @@ namespace WeWereBound.Engine
             }
         }
 
-        private struct CommandInfo
-        {
+        private struct CommandInfo {
             public Action<string[]> Action;
             public string Help;
             public string Usage;
@@ -625,42 +565,32 @@ namespace WeWereBound.Engine
 
         #region Parsing Arguments
 
-        private static string ArgString(string arg)
-        {
+        private static string ArgString(string arg) {
             if (arg == null)
                 return "";
             else
                 return arg;
         }
 
-        private static bool ArgBool(string arg)
-        {
+        private static bool ArgBool(string arg) {
             if (arg != null)
                 return !(arg == "0" || arg.ToLower() == "false" || arg.ToLower() == "f");
             else
                 return false;
         }
 
-        private static int ArgInt(string arg)
-        {
-            try
-            {
+        private static int ArgInt(string arg) {
+            try {
                 return Convert.ToInt32(arg);
-            }
-            catch
-            {
+            } catch {
                 return 0;
             }
         }
 
-        private static float ArgFloat(string arg)
-        {
-            try
-            {
+        private static float ArgFloat(string arg) {
+            try {
                 return Convert.ToSingle(arg);
-            }
-            catch
-            {
+            } catch {
                 return 0;
             }
         }
@@ -672,43 +602,36 @@ namespace WeWereBound.Engine
         #region Built-In Commands
 #if !CONSOLE
         [Command("clear", "Clears the terminal")]
-        public static void Clear()
-        {
+        public static void Clear() {
             GameEngine.Commands.drawCommands.Clear();
         }
 
         [Command("exit", "Exits the game")]
-        private static void Exit()
-        {
+        private static void Exit() {
             GameEngine.Instance.Exit();
         }
 
         [Command("vsync", "Enables or disables vertical sync")]
-        private static void Vsync(bool enabled = true)
-        {
+        private static void Vsync(bool enabled = true) {
             GameEngine.Graphics.SynchronizeWithVerticalRetrace = enabled;
             GameEngine.Graphics.ApplyChanges();
             GameEngine.Commands.Log("Vertical Sync " + (enabled ? "Enabled" : "Disabled"));
         }
 
         [Command("fixed", "Enables or disables fixed time step")]
-        private static void Fixed(bool enabled = true)
-        {
+        private static void Fixed(bool enabled = true) {
             GameEngine.Instance.IsFixedTimeStep = enabled;
             GameEngine.Commands.Log("Fixed Time Step " + (enabled ? "Enabled" : "Disabled"));
         }
 
         [Command("framerate", "Sets the target framerate")]
-        private static void Framerate(float target)
-        {
+        private static void Framerate(float target) {
             GameEngine.Instance.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / target);
         }
 
         [Command("count", "Logs amount of Entities in the Scene. Pass a tagIndex to count only Entities with that tag")]
-        private static void Count(int tagIndex = -1)
-        {
-            if (GameEngine.Scene == null)
-            {
+        private static void Count(int tagIndex = -1) {
+            if (GameEngine.Scene == null) {
                 GameEngine.Commands.Log("Current Scene is null!");
                 return;
             }
@@ -720,16 +643,13 @@ namespace WeWereBound.Engine
         }
 
         [Command("tracker", "Logs all tracked objects in the scene. Set mode to 'e' for just entities, 'c' for just components, or 'cc' for just collidable components")]
-        private static void Tracker(string mode)
-        {
-            if (GameEngine.Scene == null)
-            {
+        private static void Tracker(string mode) {
+            if (GameEngine.Scene == null) {
                 GameEngine.Commands.Log("Current Scene is null!");
                 return;
             }
 
-            switch (mode)
-            {
+            switch (mode) {
                 default:
                     GameEngine.Commands.Log("-- Entities --");
                     GameEngine.Scene.Tracker.LogEntities();
@@ -754,28 +674,23 @@ namespace WeWereBound.Engine
         }
 
         [Command("pooler", "Logs the pooled Entity counts")]
-        private static void Pooler()
-        {
+        private static void Pooler() {
             GameEngine.Pooler.Log();
         }
 
         [Command("fullscreen", "Switches to fullscreen mode")]
-        private static void Fullscreen()
-        {
+        private static void Fullscreen() {
             GameEngine.SetFullscreen();
         }
 
         [Command("window", "Switches to window mode")]
-        private static void Window(int scale = 1)
-        {
+        private static void Window(int scale = 1) {
             GameEngine.SetWindowed(GameEngine.Width * scale, GameEngine.Height * scale);
         }
 
         [Command("help", "Shows usage help for a given command")]
-        private static void Help(string command)
-        {
-            if (GameEngine.Commands.sorted.Contains(command))
-            {
+        private static void Help(string command) {
+            if (GameEngine.Commands.sorted.Contains(command)) {
                 var c = GameEngine.Commands.commands[command];
                 StringBuilder str = new StringBuilder();
 
@@ -784,8 +699,7 @@ namespace WeWereBound.Engine
                 str.Append(command);
 
                 //Usage
-                if (!string.IsNullOrEmpty(c.Usage))
-                {
+                if (!string.IsNullOrEmpty(c.Usage)) {
                     str.Append(" ");
                     str.Append(c.Usage);
                 }
@@ -796,9 +710,7 @@ namespace WeWereBound.Engine
                     GameEngine.Commands.Log("No help info set");
                 else
                     GameEngine.Commands.Log(c.Help);
-            }
-            else
-            {
+            } else {
                 StringBuilder str = new StringBuilder();
                 str.Append("Commands list: ");
                 str.Append(string.Join(", ", GameEngine.Commands.sorted));
@@ -809,32 +721,27 @@ namespace WeWereBound.Engine
 #endif
         #endregion
 
-        private struct Line
-        {
+        private struct Line {
             public string Text;
             public Color Color;
 
-            public Line(string text)
-            {
+            public Line(string text) {
                 Text = text;
                 Color = Color.White;
             }
 
-            public Line(string text, Color color)
-            {
+            public Line(string text, Color color) {
                 Text = text;
                 Color = color;
             }
         }
     }
 
-    public class Command : Attribute
-    {
+    public class Command : Attribute {
         public string Name;
         public string Help;
 
-        public Command(string name, string help)
-        {
+        public Command(string name, string help) {
             Name = name;
             Help = help;
         }

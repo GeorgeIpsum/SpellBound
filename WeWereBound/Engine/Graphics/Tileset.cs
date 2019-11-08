@@ -1,12 +1,9 @@
 ﻿
-namespace WeWereBound.Engine
-{
-    public class Tileset
-    {
+namespace WeWereBound.Engine {
+    public class Tileset {
         private MTexture[,] tiles;
 
-        public Tileset(MTexture texture, int tileWidth, int tileHeight)
-        {
+        public Tileset(MTexture texture, int tileWidth, int tileHeight) {
             Texture = texture;
             TileWidth = tileWidth;
             TileHeight = TileHeight;
@@ -17,33 +14,26 @@ namespace WeWereBound.Engine
                     tiles[x, y] = new MTexture(Texture, x * tileWidth, y * tileHeight, tileWidth, tileHeight);
         }
 
-        public MTexture Texture
-        {
+        public MTexture Texture {
             get; private set;
         }
 
-        public int TileWidth
-        {
+        public int TileWidth {
             get; private set;
         }
 
-        public int TileHeight
-        {
+        public int TileHeight {
             get; private set;
         }
 
-        public MTexture this[int x, int y]
-        {
-            get
-            {
+        public MTexture this[int x, int y] {
+            get {
                 return tiles[x, y];
             }
         }
 
-        public MTexture this[int index]
-        {
-            get
-            {
+        public MTexture this[int index] {
+            get {
                 if (index < 0)
                     return null;
                 else

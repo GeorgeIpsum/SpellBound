@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace WeWereBound.Engine
-{
-    public class SineWave : Component
-    {
+namespace WeWereBound.Engine {
+    public class SineWave : Component {
         /*
          *    SINE WAVE:
          * 
@@ -43,59 +41,48 @@ namespace WeWereBound.Engine
         private float counter;
 
         public SineWave()
-            : base(true, false)
-        {
+            : base(true, false) {
 
         }
 
         public SineWave(float frequency)
-            : this()
-        {
+            : this() {
             Frequency = frequency;
         }
 
-        public override void Update()
-        {
+        public override void Update() {
             Counter += MathHelper.TwoPi * Frequency * Rate * (UseRawDeltaTime ? GameEngine.RawDeltaTime : GameEngine.DeltaTime);
             if (OnUpdate != null)
                 OnUpdate(Value);
         }
 
-        public float ValueOffset(float offset)
-        {
+        public float ValueOffset(float offset) {
             return (float)Math.Sin(counter + offset);
         }
 
-        public SineWave Randomize()
-        {
+        public SineWave Randomize() {
             Counter = Calc.Random.NextFloat() * MathHelper.TwoPi * 2;
             return this;
         }
 
-        public void Reset()
-        {
+        public void Reset() {
             Counter = 0;
         }
 
-        public void StartUp()
-        {
+        public void StartUp() {
             Counter = MathHelper.PiOver2;
         }
 
-        public void StartDown()
-        {
+        public void StartDown() {
             Counter = MathHelper.PiOver2 * 3f;
         }
 
-        public float Counter
-        {
-            get
-            {
+        public float Counter {
+            get {
                 return counter;
             }
 
-            set
-            {
+            set {
                 counter = (value + MathHelper.TwoPi * 4) % (MathHelper.TwoPi * 4);
 
                 Value = (float)Math.Sin(counter);

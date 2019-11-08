@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WeWereBound.Engine
-{
-    public class Alarm : Component
-    {
+namespace WeWereBound.Engine {
+    public class Alarm : Component {
         public enum AlarmMode { Persist, Oneshot, Looping };
 
         public Action OnComplete;
@@ -17,8 +15,7 @@ namespace WeWereBound.Engine
 
         private static Stack<Alarm> cached = new Stack<Alarm>();
 
-        public static Alarm Create(AlarmMode mode, Action onComplete, float duration = 1f, bool start = false)
-        {
+        public static Alarm Create(AlarmMode mode, Action onComplete, float duration = 1f, bool start = false) {
             Alarm alarm;
             if (cached.Count == 0)
                 alarm = new Alarm();
@@ -29,8 +26,7 @@ namespace WeWereBound.Engine
             return alarm;
         }
 
-        public static Alarm Set(Entity entity, float duration, Action onComplete, AlarmMode alarmMode = AlarmMode.Oneshot)
-        {
+        public static Alarm Set(Entity entity, float duration, Action onComplete, AlarmMode alarmMode = AlarmMode.Oneshot) {
             Alarm alarm = Alarm.Create(alarmMode, onComplete, duration, true);
             entity.Add(alarm);
             return alarm;
@@ -39,13 +35,11 @@ namespace WeWereBound.Engine
         #endregion
 
         private Alarm()
-            : base(false, false)
-        {
+            : base(false, false) {
 
         }
 
-        private void Init(AlarmMode mode, Action onComplete, float duration = 1f, bool start = false)
-        {
+        private void Init(AlarmMode mode, Action onComplete, float duration = 1f, bool start = false) {
 #if DEBUG
             if (duration <= 0)
                 throw new Exception("Alarm duration cannot be less than zero");
@@ -61,11 +55,9 @@ namespace WeWereBound.Engine
                 Start();
         }
 
-        public override void Update()
-        {
+        public override void Update() {
             TimeLeft -= GameEngine.DeltaTime;
-            if (TimeLeft <= 0)
-            {
+            if (TimeLeft <= 0) {
                 TimeLeft = 0;
                 if (OnComplete != null)
                     OnComplete();
@@ -79,20 +71,17 @@ namespace WeWereBound.Engine
             }
         }
 
-        public override void Removed(Entity entity)
-        {
+        public override void Removed(Entity entity) {
             base.Removed(entity);
             cached.Push(this);
         }
 
-        public void Start()
-        {
+        public void Start() {
             Active = true;
             TimeLeft = Duration;
         }
 
-        public void Start(float duration)
-        {
+        public void Start(float duration) {
 #if DEBUG
             if (duration <= 0)
                 throw new Exception("Alarm duration cannot be <= 0");
@@ -102,8 +91,7 @@ namespace WeWereBound.Engine
             Start();
         }
 
-        public void Stop()
-        {
+        public void Stop() {
             Active = false;
         }
     }
