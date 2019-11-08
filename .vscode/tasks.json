@@ -1,0 +1,31 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build project",
+      "type": "shell",
+      "windows": {
+        "command": "msbuild",
+        "args": [
+          "/property:GenerateFullPaths=true;Configuration=Debug",
+          "/verbosity:normal"
+        ],
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "echo": true,
+        "focus": true,
+        "showReuseMessage": false,
+        "clear": false,
+        "revealProblems": "onProblem"
+      },
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}
