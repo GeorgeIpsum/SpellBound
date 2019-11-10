@@ -7,11 +7,16 @@
       "label": "build project",
       "type": "shell",
       "windows": {
-        "command": "msbuild",
+        "command": "MSBuild",
         "args": [
-          "/property:GenerateFullPaths=true;Configuration=Debug",
-          "/verbosity:normal"
+          "-p:'GenerateFullPaths=true;Configuration=Debug'",
+          "-v:m"
         ],
+        "options": {
+          "shell": {
+            "executable": "powershell.exe"
+          }
+        }
       },
       "group": {
         "kind": "build",
