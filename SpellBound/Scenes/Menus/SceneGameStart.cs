@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Monocle;
 using SpellBound.Entities.Actors;
+using SpellBound.Entities.Environment;
 
 namespace SpellBound.Scenes {
   class SceneGameStart : Scene {
@@ -26,6 +27,8 @@ namespace SpellBound.Scenes {
       Vector2 screenHalf = (new Vector2(Engine.Width, Engine.Height)) / 2;
       player.Position = screenHalf;
       Add(player);
+
+      genWalls();
     }
 
     public override void Update() {
@@ -55,6 +58,36 @@ namespace SpellBound.Scenes {
         npos.Y = Math.Max(npos.Y, tresh.Y / 2);
 
       camera.Position = npos;
+    }
+
+    private void genWalls() {
+      for (int i = 0; i < 3; i++) {
+        Vector2 position = new Vector2(player.X, player.Y - 32 * (i+2));
+        Vector2 position2 = new Vector2(player.X, player.Y + 32 * (i+2));
+        Wall w = new Wall(position);
+        Wall w2 = new Wall(position2);
+        Wall[] a = new Wall[2];
+        a[0] = w; a[1] = w2;
+        Add(a);
+      }
+
+      for (int i = 0; i < 5; i++) {
+        Vector2 pos = new Vector2(player.X - 32 * (i+3), player.Y);
+        Vector2 pos2 = new Vector2(player.X + 32*(i+3), player.Y);
+        Wall w = new Wall(pos);
+        Wall w2 = new Wall(pos2);
+        Add(w);
+        Add(w2);
+      }
+
+      for (int i = 0; i < 30; i++) {
+        Random rand = new Random(i);
+        float x = Calc.Range(rand, player.X - 500, player.X + 500);
+        float y = Calc.Range(rand, player.Y - 300, player.Y + 300);
+        Vector2 pos = new Vector2(x,y);
+        Wall w = new Wall(pos);
+        Add(w);
+      }
     }
   }
 }

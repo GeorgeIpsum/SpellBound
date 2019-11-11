@@ -7,7 +7,7 @@ using SpellBound.Singletons;
 namespace SpellBound {
   public class SpellBound : Engine {
     public SpellBound() : base(1280, 720, 640, 360, "SpellBound Test", false) {
-      Engine.ClearColor = Color.CornflowerBlue;
+      Engine.ClearColor = Color.Black;
       Content.RootDirectory = "Content";
       ViewPadding = -32;
     }

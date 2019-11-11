@@ -1,7 +1,13 @@
 <Sprites>
-  <pika path="" start="idle">
+  <pika path="" start="idle_front">
     <Center />
-    <Anim id="idle" path="pika_01" />
-    <Anim id="move" path="pika_02" delay="0.1" goto="idle" />
+    <Anim id="idle_front" path="pika_01" />
+    <Anim id="move_down" path="pika_02" delay="0.1" goto="idle_front" />
+    <Anim id="idle_back" path="pika_03" />
+    <Anim id="move_up" path="pika_04" delay="0.1" goto="idle_back" />
+    <Anim id="idle_left" path="pika_05" />
+    <Anim id="move_left" path="pika_06" delay="0.1" goto="idle_left" />
+    <Anim id="idle_right" path="pika_07" />
+    <Anim id="move_right" path="pika_08" delay="0.1" goto="idle_right" />
   </pika>
 </Sprites>

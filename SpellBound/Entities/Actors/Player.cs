@@ -13,7 +13,11 @@ namespace SpellBound.Entities.Actors {
 
     public void Move(Vector2 delta) {
       if (delta.X != 0 || delta.Y != 0) {
-        Sprite.Play("move", false);
+        if(delta.X != 0) {
+          Sprite.Play(delta.X > 0 ? "move_right" : "move_left", false);
+        } else {
+          Sprite.Play(delta.Y > 0 ? "move_down" : "move_up", false);
+        }
 
         if (CollideCheck(TagsSingleton.TAG_Wall, new Vector2(X + delta.X, Y))) {
           while (!CollideCheck(TagsSingleton.TAG_Wall, new Vector2(X + Calc.Sign(delta).X, Y))) X += Calc.Sign(delta).X;

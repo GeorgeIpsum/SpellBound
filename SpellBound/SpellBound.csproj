@@ -61,6 +61,7 @@
     <Compile Include="Entities\Actor.cs" />
     <Compile Include="Entities\Actors\NonPlayer.cs" />
     <Compile Include="Entities\Actors\Player.cs" />
+    <Compile Include="Entities\Environment\Wall.cs" />
     <Compile Include="Entities\TextBox.cs" />
     <Compile Include="Scenes\Menus\SceneGameStart.cs" />
     <Compile Include="Singletons\GraphicsSingleton.cs" />
