@@ -5,6 +5,6 @@
 		}
 	],
 	"settings": {
-		"terminal.integrated.automationShell.windows": "cmd.exe"
+		"terminal.integrated.automationShell.windows": "powershell.exe"
 	}
 }

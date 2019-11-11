@@ -9,9 +9,19 @@
       "windows": {
         "command": "MSBuild",
         "args": [
-          "-p:'GenerateFullPaths=true;Configuration=Debug'",
+          "-p:GenerateFullPaths=true",
+          "-p:Configuration=Debug",
           "-v:m"
-        ]
+        ],
+        "options": {
+          "shell": {
+            "executable": "cmd.exe",
+            "args": [
+              "/d",
+              "/c"
+            ]
+          }
+        }
       },
       "group": {
         "kind": "build",
