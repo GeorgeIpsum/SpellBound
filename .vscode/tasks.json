@@ -11,12 +11,7 @@
         "args": [
           "-p:'GenerateFullPaths=true;Configuration=Debug'",
           "-v:m"
-        ],
-        "options": {
-          "shell": {
-            "executable": "powershell.exe"
-          }
-        }
+        ]
       },
       "group": {
         "kind": "build",
