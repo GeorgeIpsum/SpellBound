@@ -1,0 +1,7 @@
+<Sprites>
+  <pika path="" start="idle">
+    <Center />
+    <Anim id="idle" path="pika_01" />
+    <Anim id="move" path="pika_02" delay="0.1" goto="idle" />
+  </pika>
+</Sprites>

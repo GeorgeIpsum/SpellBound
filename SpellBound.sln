@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellBound", "SpellBound\SpellBound.csproj", "{A5332BED-48CF-4757-98DE-ACFF51055C4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monocle.MonoGame", "Monocle\Monocle.MonoGame.csproj", "{6EC3C0A6-C5BE-42CE-AEA5-881D8A97EB60}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5332BED-48CF-4757-98DE-ACFF51055C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5332BED-48CF-4757-98DE-ACFF51055C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5332BED-48CF-4757-98DE-ACFF51055C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5332BED-48CF-4757-98DE-ACFF51055C4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EC3C0A6-C5BE-42CE-AEA5-881D8A97EB60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EC3C0A6-C5BE-42CE-AEA5-881D8A97EB60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EC3C0A6-C5BE-42CE-AEA5-881D8A97EB60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EC3C0A6-C5BE-42CE-AEA5-881D8A97EB60}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {330EF425-C887-4E76-B928-A5ADC336426B}
+	EndGlobalSection
+EndGlobal
