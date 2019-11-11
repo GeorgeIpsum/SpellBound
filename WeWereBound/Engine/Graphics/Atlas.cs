@@ -24,6 +24,7 @@ namespace WeWereBound.Engine {
         public static Atlas FromAtlas(string path, AtlasDataFormat format) {
             var atlas = new Atlas();
             atlas.Sources = new List<Texture2D>();
+            // if(GameEngine.Instance.Content.RootDirectory != null) path = $@"{GameEngine.Instance.Content.RootDirectory}\{path}";
             ReadAtlasData(atlas, path, format);
             return atlas;
         }
@@ -60,7 +61,7 @@ namespace WeWereBound.Engine {
 
                         foreach (XmlElement tex in at) {
                             var texturePath = tex.Attr("n", "");
-                            var fileStream = new FileStream(Path.Combine(Path.GetDirectoryName(path), texturePath + ".png"), FileMode.Open, FileAccess.Read);
+                            var fileStream = new FileStream(Path.Combine(Path.GetDirectoryName($@"{GameEngine.Instance.Content.RootDirectory}\{path}"), texturePath + ".png"), FileMode.Open, FileAccess.Read);
                             var texture = Texture2D.FromStream(GameEngine.Instance.GraphicsDevice, fileStream);
                             fileStream.Close();
 

@@ -42,6 +42,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Bound\Entities\Actors\NonPlayer.cs" />
+    <Compile Include="Bound\Entities\Actors\Player.cs" />
     <Compile Include="Engine\Colliders\Circle.cs" />
     <Compile Include="Engine\Colliders\Collide.cs" />
     <Compile Include="Engine\Colliders\Collider.cs" />
@@ -120,6 +122,9 @@
     <Compile Include="Engine\Utilities\Tracker.cs" />
     <Compile Include="Engine\Utilities\VirtualMap.cs" />
     <Compile Include="Bound\Entities\Actor.cs" />
+    <Compile Include="Bound\Entities\TextBox.cs" />
+    <Compile Include="Bound\Graphics\GraphicsHandler.cs" />
+    <Compile Include="Bound\Logic\TagsHandler.cs" />
     <Compile Include="Bound\Scenes\Menus\GameStartScene.cs" />
     <Compile Include="Bound\SpellBound.cs" />
   </ItemGroup>
@@ -135,7 +140,7 @@
     <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="Content\Content.mgcb" />
+    <MonoGameContentReference Include="Bound\Content\Content.mgcb" />
     <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\SDL2.dll">
       <Link>x86\SDL2.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -181,9 +186,19 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="app.manifest" />
-    <None Include="Content\WeWereBoundDefault.spritefont" />
+    <None Include="Bound\Content\WeWereBoundDefault.spritefont" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Bound\Content\Atlases\atlas.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Bound\Content\Atlases\atlas0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Bound\Content\SpriteData\Sprites.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
