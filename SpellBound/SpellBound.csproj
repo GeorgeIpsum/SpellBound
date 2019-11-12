@@ -64,6 +64,7 @@
     <Compile Include="Entities\Environment\Wall.cs" />
     <Compile Include="Entities\TextBox.cs" />
     <Compile Include="Scenes\Menus\SceneGameStart.cs" />
+    <Compile Include="Scenes\Dungeon.cs" />
     <Compile Include="Singletons\GraphicsSingleton.cs" />
     <Compile Include="Singletons\TagsSingleton.cs" />
     <Compile Include="SpellBound.cs" />
